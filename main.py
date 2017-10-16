@@ -6,14 +6,13 @@
 
 import sys
 
+from controller import Controller
+
 def main():
     print "Start"
-
-    # Grab a filename from the user
-    _filename = raw_input("Please enter a filename of a LERS file format: ")
-
     
-
+    _controller = Controller()
+    _controller.run()
 
 
 if __name__ == "__main__":
