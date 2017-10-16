@@ -6,6 +6,9 @@
 
 from dataset import Dataset
 
+import numbers
+import decimal
+
 class LERS_Reader:
 
 
@@ -21,7 +24,7 @@ class LERS_Reader:
             line.split()
 
             if line[0] == '<':
-                print "found <"
+                print "found <> row, ignoring"
             elif line[0] == '[':
                 _attr = line.split()
                 del _attr[0]
@@ -33,12 +36,14 @@ class LERS_Reader:
 
                 self._dataset.attributes = _attr
             else:
-                self._dataset.add_to_universe(line.split())
+                _case = line.split()
 
+                for i in range(0,len(_case)):
+                    if _case[i].isdigit():
+                        self._dataset.symbolic = False
+                        _case[i] = float(_case[i])
 
-
-        
-
+                self._dataset.add_to_universe(_case)
 
 
 

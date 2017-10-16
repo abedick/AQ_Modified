@@ -16,7 +16,7 @@ class Dataset(object):
         self._attributes = []
         self._decision = None
         self._universe = []
-        self.symbolic = true
+        self._symbolic = True
 
     @property
     def attributes(self):

@@ -30,6 +30,13 @@ class Controller(object):
 
 
     def print_dataset(self, _dataset):
+        print "\n\n\nDataset Information"
+        print "Data set is onyl symbolic: " + str(_dataset.symbolic)
+        print "Decision name: " + str(_dataset.decision)
+        print "Number of attributes: " + str(len(_dataset.attributes))
+        print "Number of cases in universe: " + str(len(_dataset.universe))
+        print "\n\n\n"
+
         print _dataset.attributes
         
         for i in range(0,len(_dataset.universe)):
