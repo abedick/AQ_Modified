@@ -21,12 +21,17 @@ class LERS_Reader:
         self._file = open(self._filename, 'r')
 
         for line in self._file:
-            line.split()
 
-            if line[0] == '<':
+            __data_row = line
+
+            # Filter out comments in a line            
+            head, sep, tail = __data_row.partition('!')
+            __data_row = head
+
+            if __data_row[0] == '<':
                 print "found <> row, ignoring"
-            elif line[0] == '[':
-                _attr = line.split()
+            elif __data_row[0] == '[':
+                _attr = __data_row.split()
                 del _attr[0]
                 del _attr[-1]
 
@@ -36,7 +41,7 @@ class LERS_Reader:
 
                 self._dataset.attributes = _attr
             else:
-                _case = line.split()
+                _case = __data_row.split()
 
                 for i in range(0,len(_case)):
                     if _case[i].isdigit():
