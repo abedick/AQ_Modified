@@ -13,36 +13,24 @@ class Controller(object):
         self._dataset = Dataset()
 
     def run(self):
-        self._dataset = Dataset()
+        # Grab a filename from the user
+        # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        self._dataset.attributes = [2,3,4]
+        _filename = "test_data.d"
+        print _filename
 
-        # print _dataset.attributes
+        # Start the reader
+        _reader = LERS_Reader(_filename)
 
-        self._dataset.universe = [4,5,6]
+        _reader.read_file()
 
-        # print _dataset.universe
-
-        self._dataset.add_to_universe(5)
-
-        # print _dataset.universe
-
-        self.print_dataset()
+        # Grab the data from the file
+        self._dataset = _reader.return_data()
+        self.print_dataset(_reader.return_data())
 
 
-#     # # Grab a filename from the user
-#     # _filename = raw_input("Please enter a filename of a LERS file format: ")
-
-#     # # Start the reader
-#     # _reader = LERS_Reader(_filename)
-
-#     # # Grab the data from the file
-#     # _data = _reader.return_data()
-
-#     # print _data
-
-    def print_dataset(self):
-        print self._dataset.attributes
+    def print_dataset(self, _dataset):
+        print _dataset.attributes
         
-        for i in range(0,len(self._dataset.attributes)):
-            print self._dataset.universe[i]
+        for i in range(0,len(_dataset.universe)):
+            print _dataset.universe[i]

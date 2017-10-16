@@ -14,7 +14,9 @@ class Dataset(object):
     def __init__(self):
         self._name = "Dataset"
         self._attributes = []
+        self._decision = None
         self._universe = []
+        self.symbolic = true
 
     @property
     def attributes(self):
@@ -23,6 +25,14 @@ class Dataset(object):
     @attributes.setter
     def attributes(self, value):
         self._attributes = value
+
+    @property
+    def decision(self):
+        return self._decision
+
+    @decision.setter
+    def decision(self, value):
+        self._decision = value
     
     @property
     def universe(self):
@@ -34,3 +44,12 @@ class Dataset(object):
 
     def add_to_universe(self, value):
         self._universe.append(value)
+
+
+    @property
+    def symbolic(self):
+        return self._symbolic
+
+    @symbolic.setter
+    def symbolic(self, value):
+        self._symbolic = value
