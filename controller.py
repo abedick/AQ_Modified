@@ -26,7 +26,9 @@ class Controller(object):
 
         # Grab the data from the file
         self._dataset = _reader.return_data()
-        self.print_dataset(_reader.return_data())
+        # self.print_dataset(_reader.return_data())
+
+        self.check_consistency()
 
 
     def print_dataset(self, _dataset):
@@ -41,3 +43,33 @@ class Controller(object):
         
         for i in range(0,len(_dataset.universe)):
             print _dataset.universe[i]
+
+
+    def check_consistency(self):
+        # compute concepts
+
+        _Decisions = []
+
+        # gather all the decisions present in the dataset
+        for i in range (0, len(self._dataset.universe)):
+            _case_decision = len(self._dataset.universe[0]) - 1
+            _Decisions.append(self._dataset.universe[i][_case_decision])
+        
+        # filter out the duplicates 
+        _list_decisions = list(set(_Decisions))
+
+        # build concepts
+        _concept_lists = []
+
+        for i in range(0, len(_list_decisions)):
+            # _concept_lists[i] = _list_decisions[i]
+            _concept_lists.append([_list_decisions[i], []])
+
+            for k in range(0,len(self._dataset.universe)):
+                _case_decision = len(self._dataset.universe[0]) - 1
+                if self._dataset.universe[k][_case_decision] == _list_decisions[i]:
+                    _concept_lists[i][1].append(k)
+
+        self._dataset.d_star = _concept_lists
+
+        print self._dataset.d_star

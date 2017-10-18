@@ -17,6 +17,7 @@ class Dataset(object):
         self._decision = None
         self._universe = []
         self._symbolic = True
+        self._d_star = None
 
     @property
     def attributes(self):
@@ -53,3 +54,16 @@ class Dataset(object):
     @symbolic.setter
     def symbolic(self, value):
         self._symbolic = value
+
+    # D Star is as such
+    # Multi-dim array where at [i], [i][0] is the string of the decision and 
+    #   [i][1] is a list of the indecies of the cases in the universe in which that
+    #   decision is present
+
+    @property
+    def d_star(self):
+        return self._d_star
+
+    @d_star.setter
+    def d_star(self, value):
+        self._d_star = value

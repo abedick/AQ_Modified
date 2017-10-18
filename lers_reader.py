@@ -10,8 +10,7 @@ import numbers
 import decimal
 
 class LERS_Reader:
-
-
+    
     def __init__(self, filename):
         self._filename = filename
         self._dataset = Dataset()
