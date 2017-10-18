@@ -18,6 +18,8 @@ class Dataset(object):
         self._universe = []
         self._symbolic = True
         self._d_star = None
+        self._a_star = None
+        self._consistent = True
 
     @property
     def attributes(self):
@@ -67,3 +69,19 @@ class Dataset(object):
     @d_star.setter
     def d_star(self, value):
         self._d_star = value
+
+    @property
+    def a_star(self):
+        return self._a_star
+
+    @a_star.setter
+    def a_star(self, value):
+        self._a_star = value
+
+    @property
+    def consistent(self):
+        return self._consistent
+
+    @consistent.setter
+    def consistent(self, value):
+        self._consistent = value
