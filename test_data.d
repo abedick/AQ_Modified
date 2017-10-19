@@ -8,4 +8,3 @@ large black blue neg
 large blue blue pos
 large black black neg
 small blue black neg
-large black blue pos

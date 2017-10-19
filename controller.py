@@ -29,6 +29,7 @@ class Controller(object):
         # self.print_dataset(_reader.return_data())
 
         self.check_consistency()
+        self.check_consistency_fast()
 
         self.print_dataset(self._dataset)
 
@@ -96,10 +97,9 @@ class Controller(object):
                 _compare_case_decision = _compare_case[_case_decision]
                 _compare_case = _compare_case[:-1]
 
-                if((i != k) and (_test_case == _compare_case) and (_test_case_decision != _compare_case_decision) and not(k in _covered)):
+                if((i != k) and (_test_case == _compare_case) and not(k in _covered)):
                     _universe_cases[i].append(k)
                     _covered.append(k)
-                    self._dataset.consistent = False
                 else:
                     if (not([i] in _universe_cases) and (i != k) and not(i in _covered)):
                         _covered.append(i)
@@ -108,16 +108,19 @@ class Controller(object):
         self._dataset.a_star = _universe_cases
                 
 
+    def check_consistency_fast(self):
 
-        # for i in range(0,len(self._dataset.universe)):
-        #     _test_case = self._dataset.universe[i]
-        #     _test_case_decision = _test_case[_case_decision]
-        #     _test_case = _test_case[:-1]
+        _case_decision = len(self._dataset.universe[0]) - 1
 
-        #     for k in range(0,len(self._dataset.universe)):
-        #         _compare_case = self._dataset.universe[k]
-        #         _compare_case_decision = _compare_case[_case_decision]
-        #         _compare_case = _compare_case[:-1]
+        for i in range(0,len(self._dataset.universe)):
+            _test_case = self._dataset.universe[i]
+            _test_case_decision = _test_case[_case_decision]
+            _test_case = _test_case[:-1]
 
-        #         if ((i != k) and (_test_case == _compare_case) and (_test_case_decision != _compare_case_decision)):
-        #             self._dataset.consistent = False
+            for k in range(0,len(self._dataset.universe)):
+                _compare_case = self._dataset.universe[k]
+                _compare_case_decision = _compare_case[_case_decision]
+                _compare_case = _compare_case[:-1]
+
+                if ((i != k) and (_test_case == _compare_case) and (_test_case_decision != _compare_case_decision)):
+                    self._dataset.consistent = False
