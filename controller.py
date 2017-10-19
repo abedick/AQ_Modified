@@ -16,7 +16,7 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "test_data3.d"
+        _filename = "test_data4.d"
         print _filename
 
         # Start the reader
@@ -26,14 +26,11 @@ class Controller(object):
 
         # Grab the data from the file
         self._dataset = _reader.return_data()
-        # self.print_dataset(_reader.return_data())
 
         self.check_consistency()
         self.check_consistency_fast()
 
         self.print_dataset(self._dataset)
-
-        print self._dataset.a_star <= self._dataset.d_star
 
 
     def print_dataset(self, _dataset):
@@ -44,6 +41,8 @@ class Controller(object):
         print "{d}*: " + str(_dataset.d_star)
         print "A*: " + str(_dataset.a_star)
         print "Number of attributes: " + str(len(_dataset.attributes))
+        print "All Attributers: " + str(_dataset.attributes)
+        print "Decision Name: " + str(_dataset.decision)
         print "Number of cases in universe: " + str(len(_dataset.universe))
         print "--------------------------------------------------------"
 
