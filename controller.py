@@ -16,7 +16,7 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "test_data.d"
+        _filename = "test_data3.d"
         print _filename
 
         # Start the reader
@@ -32,6 +32,8 @@ class Controller(object):
         self.check_consistency_fast()
 
         self.print_dataset(self._dataset)
+
+        print self._dataset.a_star <= self._dataset.d_star
 
 
     def print_dataset(self, _dataset):
@@ -98,7 +100,12 @@ class Controller(object):
                 _compare_case = _compare_case[:-1]
 
                 if((i != k) and (_test_case == _compare_case) and not(k in _covered)):
-                    _universe_cases[i].append(k)
+                    try:
+                        _universe_cases[i].append(k)
+                    except IndexError:
+                        ind = len(_universe_cases)-1
+
+                        _universe_cases[ind].append(k)
                     _covered.append(k)
                 else:
                     if (not([i] in _universe_cases) and (i != k) and not(i in _covered)):
@@ -109,7 +116,6 @@ class Controller(object):
                 
 
     def check_consistency_fast(self):
-
         _case_decision = len(self._dataset.universe[0]) - 1
 
         for i in range(0,len(self._dataset.universe)):
@@ -124,3 +130,4 @@ class Controller(object):
 
                 if ((i != k) and (_test_case == _compare_case) and (_test_case_decision != _compare_case_decision)):
                     self._dataset.consistent = False
+                    break
