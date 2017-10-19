@@ -16,7 +16,7 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "test_data4.d"
+        _filename = "test_data.d"
         print _filename
 
         # Start the reader
@@ -46,7 +46,7 @@ class Controller(object):
         print "Number of cases in universe: " + str(len(_dataset.universe))
         print "--------------------------------------------------------"
 
-        print _dataset.attributes
+        print str(_dataset.attributes) + " " + str([_dataset.decision])
         
         for i in range(0,len(_dataset.universe)):
             print _dataset.universe[i]
@@ -82,7 +82,6 @@ class Controller(object):
         # assign d* to the dataset
         self._dataset.d_star = _concept_lists
 
-
         # calculate A*
 
         _universe_cases = []
@@ -112,7 +111,6 @@ class Controller(object):
                         _universe_cases.append([i])
 
         self._dataset.a_star = _universe_cases
-                
 
     def check_consistency_fast(self):
         _case_decision = len(self._dataset.universe[0]) - 1
