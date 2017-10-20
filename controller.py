@@ -18,7 +18,7 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "test_data5.d"
+        _filename = "test_data4.d"
         print _filename
 
         # Start the reader
@@ -56,7 +56,7 @@ class Controller(object):
         print str(_dataset.attributes) + " " + str([_dataset.decision])
         
         for i in range(0,len(_dataset.universe)):
-            print _dataset.universe[i]
+            print str(_dataset.universe[i]) # + " " + str(self._dataset.decision[i])
 
 
     def check_consistency(self):
@@ -198,20 +198,48 @@ class Controller(object):
                     else:
                         _new_attributes[k][l][2].append(str(_new_attributes[k][l][1][1][0]) + ".." + str(_new_attributes[k][l][1][1][1]))
 
-        print(_new_attributes)
-
-
         _matrix = []
 
-        for i in range(0,len(_new_attributes[0])):
-            _matrix.append(_new_attributes[0][i][2])
+        for k in range(0,len(_new_attributes)):
+
+            for i in range(0,len(_new_attributes[k])):
+                _matrix.append(_new_attributes[k][i][2])
 
         _cases =  [[i for i in element] for element in list(izip_longest(*_matrix))]
 
+        for i in range(0,len(_cases)):
+            _cases[i] = _cases[i][::-1]
+        _number_attributes = _number_attributes[::-1]
+
+        print _new_attributes[0][1]
+
+
+        _attribute_names = []
+
+        for k in range(0,len(_new_attributes)):
+            for i in _new_attributes[k]:
+                _attribute_names.append(i[0])
+
+            _attribute_names = _attribute_names[::-1]
+
+            print _attribute_names
+        
+
         for i in range(0,len(self._dataset.universe)):
-            for k in range(0,len(_cases[i])):
-                self._dataset.universe[i].append(_cases[i][k])
+            for k in _number_attributes:
+                del self._dataset.universe[i][k]
 
-        for i in range(0,len(_new_attributes[0])):
-            self._dataset.attributes.append(_new_attributes[0][i][0])
 
+        for k in _number_attributes:
+            del self._dataset.attributes[k]
+
+
+        for j in _number_attributes:
+            for i in range(0,len(self._dataset.universe)):
+                for k in range(0,len(_cases[i])):
+                    self._dataset.universe[i].insert(j,_cases[i][k])
+
+            for i in range(0,len(_new_attributes)):
+                for k in range(0,len(_new_attributes[i])):
+                    self._dataset.attributes.insert(j,_attribute_names[k])
+    
