@@ -18,7 +18,7 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "test_data4.d"
+        _filename = "test_data5.d"
         print _filename
 
         # Start the reader
@@ -37,7 +37,7 @@ class Controller(object):
         self.check_consistency()
         self.check_consistency_fast()
 
-        self.print_dataset(self._dataset)
+        # self.print_dataset(self._dataset)
 
 
     def print_dataset(self, _dataset):
@@ -202,17 +202,23 @@ class Controller(object):
 
         for k in range(0,len(_new_attributes)):
 
-            for i in range(0,len(_new_attributes[k])):
-                _matrix.append(_new_attributes[k][i][2])
+            _matrix.append([])
 
-        _cases =  [[i for i in element] for element in list(izip_longest(*_matrix))]
+            for i in range(0,len(_new_attributes[k])):
+                _matrix[k].append(_new_attributes[k][i][2])
+
+        _cases = []
+
+        for j in range(0,len(_matrix)):
+            _cases.append([[i for i in element] for element in list(izip_longest(*_matrix[j]))])
 
         for i in range(0,len(_cases)):
-            _cases[i] = _cases[i][::-1]
+            for k in range(0,len(_cases[i])):
+                _cases[i][k] = _cases[i][k][::-1]
         _number_attributes = _number_attributes[::-1]
 
-        print _new_attributes[0][1]
 
+        print _cases
 
         _attribute_names = []
 
@@ -221,8 +227,6 @@ class Controller(object):
                 _attribute_names.append(i[0])
 
             _attribute_names = _attribute_names[::-1]
-
-            print _attribute_names
         
 
         for i in range(0,len(self._dataset.universe)):
@@ -233,8 +237,11 @@ class Controller(object):
         for k in _number_attributes:
             del self._dataset.attributes[k]
 
+        # print _cases
+
 
         for j in _number_attributes:
+            print j
             for i in range(0,len(self._dataset.universe)):
                 for k in range(0,len(_cases[i])):
                     self._dataset.universe[i].insert(j,_cases[i][k])
