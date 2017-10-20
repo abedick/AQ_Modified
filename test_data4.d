@@ -1,5 +1,5 @@
 < symbols >
-[ wind humidity trip ]
+[ wind humidity temp trip ]
 4 low yes
 8 low yes
 4 med yes

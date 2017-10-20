@@ -49,7 +49,7 @@ class LERS_Reader:
                     for i in range(0,len(_case)):
                         if _case[i].isdigit():
                             self._dataset.symbolic = False
-                            _case[i] = float(_case[i])
+                            _case[i] = int(_case[i])
 
                     self._dataset.add_to_universe(_case)
 

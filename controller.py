@@ -16,7 +16,7 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "test_data.d"
+        _filename = "test_data4.d"
         print _filename
 
         # Start the reader
@@ -27,10 +27,15 @@ class Controller(object):
         # Grab the data from the file
         self._dataset = _reader.return_data()
 
+        # Check if the data is symbolic or numeric
+        if not(self._dataset.symbolic):
+            self.compute_numeric()
+
+        # check for consistency
         self.check_consistency()
         self.check_consistency_fast()
 
-        self.print_dataset(self._dataset)
+        # self.print_dataset(self._dataset)
 
 
     def print_dataset(self, _dataset):
@@ -128,3 +133,63 @@ class Controller(object):
                 if ((i != k) and (_test_case == _compare_case) and (_test_case_decision != _compare_case_decision)):
                     self._dataset.consistent = False
                     break
+    
+    def compute_numeric(self):
+        print "\n\nComputing cutpoints"
+
+        _number_attributes = []
+
+        for i in range(0,len(self._dataset.universe[0])):
+
+            # Check each attribute for if it is stored as a float
+            # This should have been stored as such from LERS_Reader at data read in
+            try:
+                float(self._dataset.universe[0][i])
+                _number_attributes.append(i)
+            except ValueError:
+                continue
+                
+        _attribute_values = []
+        # for each attribute that is numberic...
+        for i in range(0,len(_number_attributes)):
+            _attribute_values.append([_number_attributes[i],[]])
+
+            #for each case of the universe
+            for k in range(0,len(self._dataset.universe)):
+                _attribute_values[i][1].append(self._dataset.universe[k][_number_attributes[i]])
+
+
+        _new_attributes = []
+
+        for i in range(0,len(_attribute_values)):
+
+            _new_attributes.append([])
+            
+            _set = sorted(list(set(_attribute_values[i][1])))
+
+            for k in range(1,len(_set)):
+                _new_value = (_set[k-1]+_set[k])/2
+                _j = _attribute_values[i][0]
+                _new_name = str(self._dataset.attributes[_j])+"_" + str(_new_value)
+
+                _lower_range = [_set[0],_new_value]
+                _upper_range = [_new_value,max(_set)]
+
+                _new_attributes[i].append([_new_name,_new_value,[_lower_range,_upper_range],[]])
+                _set.append(_new_value)
+
+            _attribute_values[i].append(sorted(_set))
+
+
+            # _set = sorted(_set)
+            # print _set 
+
+        print _new_attributes
+
+        # print "Attribute value range: " + str(_attribute_values)
+
+
+        
+        
+
+        # print "Numeric Attributes: " + str(_number_attributes)
