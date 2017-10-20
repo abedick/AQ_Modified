@@ -7,6 +7,8 @@
 from dataset import Dataset
 from lers_reader import LERS_Reader
 
+from itertools import izip_longest
+
 class Controller(object):
 
     def __init__(self):
@@ -16,7 +18,7 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "test_data4.d"
+        _filename = "test_data5.d"
         print _filename
 
         # Start the reader
@@ -35,7 +37,7 @@ class Controller(object):
         self.check_consistency()
         self.check_consistency_fast()
 
-        # self.print_dataset(self._dataset)
+        self.print_dataset(self._dataset)
 
 
     def print_dataset(self, _dataset):
@@ -170,26 +172,46 @@ class Controller(object):
             for k in range(1,len(_set)):
                 _new_value = (_set[k-1]+_set[k])/2
                 _j = _attribute_values[i][0]
-                _new_name = str(self._dataset.attributes[_j])+"_" + str(_new_value)
+                _new_name = str(self._dataset.attributes[_j])+ "_" + str(_new_value)
 
-                _lower_range = [_set[0],_new_value]
-                _upper_range = [_new_value,max(_set)]
+                _lower_range = _set[0],_new_value
+                _upper_range = _new_value,max(_set)
 
-                _new_attributes[i].append([_new_name,_new_value,[_lower_range,_upper_range],[]])
+                _new_attributes[i].append([_new_name,[_lower_range,_upper_range],[]])
                 _set.append(_new_value)
 
             _attribute_values[i].append(sorted(_set))
 
+        # For each case of the univesre
+        for i in range(0,len(self._dataset.universe)):
 
-            # _set = sorted(_set)
-            # print _set 
+            # For each of the numerical columns
+            for k in range(0,len(_new_attributes)):
 
-        print _new_attributes
+                # for each of the new attributes
+                for l in range(0,len(_new_attributes[k])):
+                    _case_set = set([self._dataset.universe[i][_number_attributes[k]]])
+                    _lower_set = set(range(_new_attributes[k][l][1][0][0],_new_attributes[k][l][1][0][1]+1))
 
-        # print "Attribute value range: " + str(_attribute_values)
+                    if _case_set.issubset(_lower_set):
+                        _new_attributes[k][l][2].append(str(_new_attributes[k][l][1][0][0]) + ".." + str(_new_attributes[k][l][1][0][1]))
+                    else:
+                        _new_attributes[k][l][2].append(str(_new_attributes[k][l][1][1][0]) + ".." + str(_new_attributes[k][l][1][1][1]))
+
+        print(_new_attributes)
 
 
-        
-        
+        _matrix = []
 
-        # print "Numeric Attributes: " + str(_number_attributes)
+        for i in range(0,len(_new_attributes[0])):
+            _matrix.append(_new_attributes[0][i][2])
+
+        _cases =  [[i for i in element] for element in list(izip_longest(*_matrix))]
+
+        for i in range(0,len(self._dataset.universe)):
+            for k in range(0,len(_cases[i])):
+                self._dataset.universe[i].append(_cases[i][k])
+
+        for i in range(0,len(_new_attributes[0])):
+            self._dataset.attributes.append(_new_attributes[0][i][0])
+
