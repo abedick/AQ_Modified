@@ -8,9 +8,7 @@ import sys
 
 from controller import Controller
 
-def main():
-    print "Start"
-    
+def main():    
     _controller = Controller()
     _controller.run()
 

@@ -1,0 +1,10 @@
+(size, NOT large) AND (body-color, NOT black) -> (attitude, positive)
+(ink-color, NOT black) -> (attitude, positive)
+(size, NOT large) AND (ink-color, NOT black) -> (attitude, positive)
+(size, NOT large) AND (ink-color, NOT black) AND (body-color, NOT black) -> (attitude, positive)
+(body-color, NOT black) -> (attitude, positive)
+
+(size, NOT small) AND (body-color, NOT blue) -> (attitude, negative)
+(ink-color, NOT red) AND (body-color, NOT blue) -> (attitude, negative)
+(body-color, NOT blue) -> (attitude, negative)
+

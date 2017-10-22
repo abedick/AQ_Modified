@@ -1,11 +1,11 @@
 < sequence of symbols >
 [ size ink-color body-color attitude ]
-small blue blue pos
-large blue black neg
-large red blue pos
-small black blue neg !i am a comment
-large black blue neg
-large blue blue pos
-large black black neg
-small blue black neg
-!large black blue pos
+small blue blue positive
+large blue black negative
+large red blue positive
+small black blue negative !i am a comment
+large black blue negative
+large blue blue positive
+large black black negative
+small blue black negative
+!large black blue positive

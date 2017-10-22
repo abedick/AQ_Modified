@@ -32,7 +32,7 @@ class LERS_Reader:
                 __data_row = head
 
                 if __data_row[0] == '<':
-                    print "found <> row, ignoring"
+                    continue
                 elif __data_row[0] == '[':
                     _attr = __data_row.split()
                     del _attr[0]

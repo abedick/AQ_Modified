@@ -6,6 +6,8 @@
 
 from dataset import Dataset
 from lers_reader import LERS_Reader
+from aq import AQ
+from ruleset_printer import Printer
 
 from itertools import izip_longest
 
@@ -13,13 +15,15 @@ class Controller(object):
 
     def __init__(self):
         self._dataset = Dataset()
+        self._aq = AQ()
+        self._results = None
+        self._printer = Printer()
 
     def run(self):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "test_data4.d"
-        print _filename
+        _filename = "test_data.d"
 
         # Start the reader
         _reader = LERS_Reader(_filename)
@@ -34,10 +38,14 @@ class Controller(object):
             self.compute_numeric()
 
         # check for consistency
-        # self.check_consistency()
-        # self.check_consistency_fast()
+        self.check_consistency()
+        self.check_consistency_fast()
 
-        self.print_dataset(self._dataset)
+        # self.print_dataset(self._dataset)
+
+        self._results = self._aq.run(self._dataset)
+
+        self._printer.printer(self._results,self._dataset.decision)
 
 
     def print_dataset(self, _dataset):

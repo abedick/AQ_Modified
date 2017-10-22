@@ -8,3 +8,4 @@
 16 high low no
 30 high high no
 12 high high no
+!12 high high yes
