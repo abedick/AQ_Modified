@@ -18,7 +18,7 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "test_data5.d"
+        _filename = "test_data4.d"
         print _filename
 
         # Start the reader
@@ -34,10 +34,10 @@ class Controller(object):
             self.compute_numeric()
 
         # check for consistency
-        self.check_consistency()
-        self.check_consistency_fast()
+        # self.check_consistency()
+        # self.check_consistency_fast()
 
-        # self.print_dataset(self._dataset)
+        self.print_dataset(self._dataset)
 
 
     def print_dataset(self, _dataset):
@@ -137,8 +137,6 @@ class Controller(object):
                     break
     
     def compute_numeric(self):
-        print "\n\nComputing cutpoints"
-
         _number_attributes = []
 
         for i in range(0,len(self._dataset.universe[0])):
@@ -163,6 +161,7 @@ class Controller(object):
 
         _new_attributes = []
 
+        # Create the attribute names
         for i in range(0,len(_attribute_values)):
 
             _new_attributes.append([])
@@ -198,10 +197,10 @@ class Controller(object):
                     else:
                         _new_attributes[k][l][2].append(str(_new_attributes[k][l][1][1][0]) + ".." + str(_new_attributes[k][l][1][1][1]))
 
+
+        # Create the matrix block of the expanded data
         _matrix = []
-
         for k in range(0,len(_new_attributes)):
-
             _matrix.append([])
 
             for i in range(0,len(_new_attributes[k])):
@@ -209,44 +208,38 @@ class Controller(object):
 
         _cases = []
 
+        # Change the axis so we are looking at it case by case instead of attribute by attribute
         for j in range(0,len(_matrix)):
             _cases.append([[i for i in element] for element in list(izip_longest(*_matrix[j]))])
 
-        for i in range(0,len(_cases)):
-            for k in range(0,len(_cases[i])):
-                _cases[i][k] = _cases[i][k][::-1]
+
+        # Turn everything around so its easier to add back in and remove the old attributes
         _number_attributes = _number_attributes[::-1]
-
-
-        print _cases
 
         _attribute_names = []
 
         for k in range(0,len(_new_attributes)):
-            for i in _new_attributes[k]:
-                _attribute_names.append(i[0])
 
-            _attribute_names = _attribute_names[::-1]
-        
+            _attribute_block = []
+            for i in _new_attributes[k]:
+                _attribute_block.append(i[0])
+            _attribute_names.append(_attribute_block)
 
         for i in range(0,len(self._dataset.universe)):
             for k in _number_attributes:
                 del self._dataset.universe[i][k]
 
-
         for k in _number_attributes:
             del self._dataset.attributes[k]
+        
+        # Turn the blocks around and then add them into the list back into the position where the
+        # original numeric attributes where
+        _cases = _cases[::-1]
+        _attribute_names = _attribute_names[::-1]
+        for i in range(0,len(_cases)):
+            
+            for j in range(0,len(_cases[i])):
+                self._dataset.universe[j] = self._dataset.universe[j][:_number_attributes[i]] + _cases[i][j] + self._dataset.universe[j][_number_attributes[i]:]
 
-        # print _cases
-
-
-        for j in _number_attributes:
-            print j
-            for i in range(0,len(self._dataset.universe)):
-                for k in range(0,len(_cases[i])):
-                    self._dataset.universe[i].insert(j,_cases[i][k])
-
-            for i in range(0,len(_new_attributes)):
-                for k in range(0,len(_new_attributes[i])):
-                    self._dataset.attributes.insert(j,_attribute_names[k])
-    
+            self._dataset.attributes = self._dataset.attributes[:_number_attributes[i]] + _attribute_names[i] + self._dataset.attributes[_number_attributes[i]:]
+                
