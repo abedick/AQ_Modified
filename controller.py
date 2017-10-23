@@ -224,6 +224,7 @@ class Controller(object):
         # Turn everything around so its easier to add back in and remove the old attributes
         _number_attributes = _number_attributes[::-1]
 
+
         _attribute_names = []
 
         for k in range(0,len(_new_attributes)):
@@ -244,6 +245,15 @@ class Controller(object):
         # original numeric attributes where
         _cases = _cases[::-1]
         _attribute_names = _attribute_names[::-1]
+        _number_attributes = _number_attributes[::-1]
+
+        for i in range(0,len(_number_attributes)):
+            if i > 0:
+                print i
+                _number_attributes[i] = _number_attributes[i] - _number_attributes.index(_number_attributes[i])
+
+        _number_attributes = _number_attributes[::-1]
+
         for i in range(0,len(_cases)):
             
             for j in range(0,len(_cases[i])):

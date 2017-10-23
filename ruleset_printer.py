@@ -8,7 +8,6 @@ class Printer(object):
     def printer(self,rules,decision):
         with open("my-data.with.negation.rul",'w') as output:
 
-
             for i in range(0,len(rules)):
                 for j in range(0,len(rules[i][1])):
                     for k in range(0,len(rules[i][1][j])):

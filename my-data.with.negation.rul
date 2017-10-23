@@ -1,10 +1,4 @@
-(size, NOT large) AND (body-color, NOT black) -> (attitude, positive)
-(ink-color, NOT black) -> (attitude, positive)
-(size, NOT large) AND (ink-color, NOT black) -> (attitude, positive)
-(size, NOT large) AND (ink-color, NOT black) AND (body-color, NOT black) -> (attitude, positive)
-(body-color, NOT black) -> (attitude, positive)
+[[[['(size, NOT large)', '(body-color, NOT black)'], '(ink-color, NOT black)'], '(size, NOT large)', [['(size, NOT large)', '(body-color, NOT black)'], '(ink-color, NOT black)'], '(ink-color, NOT black)'], '(size, NOT large)', [[['(size, NOT large)', '(body-color, NOT black)'], '(ink-color, NOT black)'], '(size, NOT large)', [['(size, NOT large)', '(body-color, NOT black)'], '(ink-color, NOT black)'], '(ink-color, NOT black)'], '(ink-color, NOT black)', [[['(size, NOT large)', '(body-color, NOT black)'], '(ink-color, NOT black)'], '(size, NOT large)', [['(size, NOT large)', '(body-color, NOT black)'], '(ink-color, NOT black)'], '(ink-color, NOT black)'], '(body-color, NOT black)'] AND (body-color, NOT black) -> (attitude, positive)
 
-(size, NOT small) AND (body-color, NOT blue) -> (attitude, negative)
-(ink-color, NOT red) AND (body-color, NOT blue) -> (attitude, negative)
-(body-color, NOT blue) -> (attitude, negative)
+[['(size, NOT small)', '(body-color, NOT blue)'], '(ink-color, NOT red)', ['(size, NOT small)', '(body-color, NOT blue)'], '(body-color, NOT blue)'] AND (body-color, NOT blue) -> (attitude, negative)
 
