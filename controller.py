@@ -23,7 +23,7 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "test_data4.d"
+        _filename = "test_data.d"
 
         # Start the reader
         _reader = LERS_Reader(_filename)
@@ -38,14 +38,14 @@ class Controller(object):
             self.compute_numeric()
 
         # check for consistency
-        # self.check_consistency()
+        self.calculate_blocks()
         self.check_consistency_fast()
 
         self.print_dataset(self._dataset)
 
-        # self._results = self._aq.run(self._dataset)
+        self._results = self._aq.run(self._dataset)
 
-        # self._printer.printer(self._results,self._dataset.decision)
+        self._printer.printer(self._results,self._dataset.decision)
 
 
     def print_dataset(self, _dataset):
@@ -54,8 +54,7 @@ class Controller(object):
         print "Data set is only symbolic: " + str(_dataset.symbolic)
         print "Data set is consistent: " + str(_dataset.consistent)
         print "{d}*: " + str(_dataset.d_star)
-        print "A*: " + str(_dataset.a_star)
-        print "Number of attributes: " + str(len(_dataset.attributes))
+        print "Number of attributes: " + str(len(_dataset.attributes[0]))
         print "All Attributers: " + str(_dataset.attributes[0])
         print "Decision Name: " + str(_dataset.attributes[1])
         print "Number of cases in universe: " + str(len(_dataset.universe))
@@ -66,70 +65,30 @@ class Controller(object):
 
         
         
-        for i in range(0,len(_dataset.universe)):
-            print str(_dataset.universe[i]) # + " " + str(self._dataset.decision[i])
-            # input = raw_input()
+        # for i in range(0,len(_dataset.universe)):
+        #     print str(_dataset.universe[i]) # + " " + str(self._dataset.decision[i])
+        #     # input = raw_input()
 
-
-    def check_consistency(self):
-        # compute concepts
-
-        _Decisions = []
-        _case_decision = len(self._dataset.universe[0]) - 1
-
-        # Calculate {d}*
-
-        # gather all the decisions present in the dataset
-        for i in range (0, len(self._dataset.universe)):
-            _case_decision = len(self._dataset.universe[0]) - 1
-            _Decisions.append(self._dataset.universe[i][_case_decision])
-        
-        # filter out the duplicates 
-        _list_decisions = list(set(_Decisions))
-
-        # build concepts
-        _concept_lists = []
-
-        for i in range(0, len(_list_decisions)):
-            _concept_lists.append([_list_decisions[i], []])
-
-            for k in range(0,len(self._dataset.universe)):
-                _case_decision = len(self._dataset.universe[0]) - 1
-                if self._dataset.universe[k][_case_decision] == _list_decisions[i]:
-                    _concept_lists[i][1].append(k)
-
-        # assign d* to the dataset
-        self._dataset.d_star = _concept_lists
-
-        # calculate A*
-
-        _universe_cases = []
-        _covered = []
+    # Calculateds {d}*
+    def calculate_blocks(self):
+        _case_decision = []
 
         for i in range(0,len(self._dataset.universe)):
-            _test_case = self._dataset.universe[i]
-            _test_case_decision = _test_case[_case_decision]
-            _test_case = _test_case[:-1]
+            if self._dataset.universe[i][1] not in _case_decision:
+                _case_decision.append(self._dataset.universe[i][1])
 
-            for k in range(0,len(self._dataset.universe)):
-                _compare_case = self._dataset.universe[k]
-                _compare_case_decision = _compare_case[_case_decision]
-                _compare_case = _compare_case[:-1]
+        _block = []
+        for i in _case_decision:
+            _block.append([[i[0]],[]])
 
-                if((i != k) and (_test_case == _compare_case) and not(k in _covered)):
-                    try:
-                        _universe_cases[i].append(k)
-                    except IndexError:
-                        ind = len(_universe_cases)-1
-
-                        _universe_cases[ind].append(k)
-                    _covered.append(k)
-                else:
-                    if (not([i] in _universe_cases) and (i != k) and not(i in _covered)):
-                        _covered.append(i)
-                        _universe_cases.append([i])
-
-        self._dataset.a_star = _universe_cases
+        for i in range(0,len(self._dataset.universe)):
+            _placed = False
+            while not _placed:
+                for k in range(0,len(_case_decision)):
+                    if self._dataset.universe[i][1] == _case_decision[k]:
+                        _block[k][1].append(i)
+                        _placed = True
+        self._dataset._d_star = _block
 
     def check_consistency_fast(self):
         _case_decision = len(self._dataset.universe[0]) - 1
