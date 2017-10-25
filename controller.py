@@ -23,7 +23,7 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "test_data.d"
+        _filename = "test_data5.d"
 
         # Start the reader
         _reader = LERS_Reader(_filename)
@@ -41,7 +41,7 @@ class Controller(object):
         # self.check_consistency()
         self.check_consistency_fast()
 
-        self.print_dataset(self._dataset)
+        # self.print_dataset(self._dataset)
 
         # self._results = self._aq.run(self._dataset)
 
@@ -62,7 +62,7 @@ class Controller(object):
         print "--------------------------------------------------------"
 
 
-        print str(_dataset.attributes) + " " + str([_dataset.decision])
+        print str(_dataset.attributes)
 
         input = raw_input()
         
@@ -150,121 +150,118 @@ class Controller(object):
     def compute_numeric(self):
         _number_attributes = []
 
-        for i in range(0,len(self._dataset.universe[0])):
-
-            # Check each attribute for if it is stored as a float
-            # This should have been stored as such from LERS_Reader at data read in
+        # Check each attribute and if it is a type float, add the index number to the array.
+        # This should have been stored as such from LERS_Reader at data read in time.
+        for i in range(0,len(self._dataset.universe[0][0])):
             try:
-                float(self._dataset.universe[0][i])
+                float(self._dataset.universe[0][0][i])
                 _number_attributes.append(i)
             except ValueError:
                 continue
-                
+            
         _attribute_values = []
-        # for each attribute that is numberic...
+
+        # for each attribute that is numberic, append each unique case to _attribute_values[i]
         for i in range(0,len(_number_attributes)):
             _attribute_values.append([_number_attributes[i],[]])
 
-            #for each case of the universe
             for k in range(0,len(self._dataset.universe)):
-                _attribute_values[i][1].append(self._dataset.universe[k][_number_attributes[i]])
+                if self._dataset.universe[k][0][_number_attributes[i]] not in _attribute_values[i][1]:
+                    _attribute_values[i][1].append(self._dataset.universe[k][0][_number_attributes[i]])
 
+            _attribute_values[i][1] = sorted(_attribute_values[i][1])
 
         _new_attributes = []
 
-        # Create the attribute names
+        # Create the attribute attributes that were numeric and compute their ranges and append them as block to _new_attributes
         for i in range(0,len(_attribute_values)):
+            _set = _attribute_values[i][1]
 
             _new_attributes.append([])
-            
-            
-
-            _set = sorted(list(set(_attribute_values[i][1])))
-
-            # print _set
 
             for k in range(1,len(_set)):
                 _new_value = (_set[k-1]+_set[k])/2
-                _j = _attribute_values[i][0]
-                _new_name = str(self._dataset.attributes[_j])+ "_" + str(_new_value)
+                _base_string = self._dataset.attributes[0][_attribute_values[i][0]]
+                _new_name = str(_base_string) + "_" + str(_new_value)
 
-                _lower_range = _set[0],_new_value
-                _upper_range = _new_value,max(_set)
+                _lower_range = (_set[0],_new_value)
+                _upper_range = (_new_value,max(_set))
+                _range = (_lower_range,_upper_range)
 
-                _new_attributes[i].append([_new_name,[_lower_range,_upper_range],[]])
-                _set.append(_new_value)
-
-            _attribute_values[i].append(sorted(_set))
-
-        # For each case of the univesre
-        for i in range(0,len(self._dataset.universe)):
-
-            # For each of the numerical columns
-            for k in range(0,len(_new_attributes)):
-
-                # for each of the new attributes
-                for l in range(0,len(_new_attributes[k])):
-                    _case_set = set([self._dataset.universe[i][_number_attributes[k]]])
-                    # _lower_set = set(range(_new_attributes[k][l][1][0][0],_new_attributes[k][l][1][0][1]+1))
-                    _lower_set = set([_new_attributes[k][l][1][0][0],_new_attributes[k][l][1][0][1]])
-                    if _case_set.issubset(_lower_set):
-                        _new_attributes[k][l][2].append(str(_new_attributes[k][l][1][0][0]) + ".." + str(_new_attributes[k][l][1][0][1]))
-                    else:
-                        _new_attributes[k][l][2].append(str(_new_attributes[k][l][1][1][0]) + ".." + str(_new_attributes[k][l][1][1][1]))
+                _params = [_new_name,_range,[]]
+                _new_attributes[i].append(_params)
 
 
-        # Create the matrix block of the expanded data
-        _matrix = []
-        for k in range(0,len(_new_attributes)):
-            _matrix.append([])
 
-            for i in range(0,len(_new_attributes[k])):
-                _matrix[k].append(_new_attributes[k][i][2])
+        # # For each case of the univesre
+        # for i in range(0,len(self._dataset.universe)):
 
-        _cases = []
+        #     # For each of the numerical columns
+        #     for k in range(0,len(_new_attributes)):
 
-        # Change the axis so we are looking at it case by case instead of attribute by attribute
-        for j in range(0,len(_matrix)):
-            _cases.append([[i for i in element] for element in list(izip_longest(*_matrix[j]))])
+        #         # for each of the new attributes
+        #         for l in range(0,len(_new_attributes[k])):
+        #             _case_set = set([self._dataset.universe[i][_number_attributes[k]]])
+        #             # _lower_set = set(range(_new_attributes[k][l][1][0][0],_new_attributes[k][l][1][0][1]+1))
+        #             _lower_set = set([_new_attributes[k][l][1][0][0],_new_attributes[k][l][1][0][1]])
+        #             if _case_set.issubset(_lower_set):
+        #                 _new_attributes[k][l][2].append(str(_new_attributes[k][l][1][0][0]) + ".." + str(_new_attributes[k][l][1][0][1]))
+        #             else:
+        #                 _new_attributes[k][l][2].append(str(_new_attributes[k][l][1][1][0]) + ".." + str(_new_attributes[k][l][1][1][1]))
 
 
-        # Turn everything around so its easier to add back in and remove the old attributes
-        _number_attributes = _number_attributes[::-1]
+        # # Create the matrix block of the expanded data
+        # _matrix = []
+        # for k in range(0,len(_new_attributes)):
+        #     _matrix.append([])
+
+        #     for i in range(0,len(_new_attributes[k])):
+        #         _matrix[k].append(_new_attributes[k][i][2])
+
+        # _cases = []
+
+        # # Change the axis so we are looking at it case by case instead of attribute by attribute
+        # for j in range(0,len(_matrix)):
+        #     _cases.append([[i for i in element] for element in list(izip_longest(*_matrix[j]))])
 
 
-        _attribute_names = []
+        # # Turn everything around so its easier to add back in and remove the old attributes
+        # _number_attributes = _number_attributes[::-1]
 
-        for k in range(0,len(_new_attributes)):
 
-            _attribute_block = []
-            for i in _new_attributes[k]:
-                _attribute_block.append(i[0])
-            _attribute_names.append(_attribute_block)
+        # _attribute_names = []
 
-        for i in range(0,len(self._dataset.universe)):
-            for k in _number_attributes:
-                del self._dataset.universe[i][k]
+        # for k in range(0,len(_new_attributes)):
 
-        for k in _number_attributes:
-            del self._dataset.attributes[k]
+        #     _attribute_block = []
+        #     for i in _new_attributes[k]:
+        #         _attribute_block.append(i[0])
+        #     _attribute_names.append(_attribute_block)
+
+        # for i in range(0,len(self._dataset.universe)):
+        #     for k in _number_attributes:
+        #         del self._dataset.universe[i][k]
+
+        # for k in _number_attributes:
+        #     del self._dataset.attributes[k]
         
-        # Turn the blocks around and then add them into the list back into the position where the
-        # original numeric attributes where
-        _cases = _cases[::-1]
-        _attribute_names = _attribute_names[::-1]
-        _number_attributes = _number_attributes[::-1]
+        # # Turn the blocks around and then add them into the list back into the position where the
+        # # original numeric attributes where
+        # _cases = _cases[::-1]
+        # _attribute_names = _attribute_names[::-1]
+        # _number_attributes = _number_attributes[::-1]
 
-        for i in range(0,len(_number_attributes)):
-            if i > 0:
-                print i
-                _number_attributes[i] = _number_attributes[i] - _number_attributes.index(_number_attributes[i])
+        # for i in range(0,len(_number_attributes)):
+        #     if i > 0:
+        #         print i
+        #         _number_attributes[i] = _number_attributes[i] - _number_attributes.index(_number_attributes[i])
 
-        _number_attributes = _number_attributes[::-1]
+        # _number_attributes = _number_attributes[::-1]
 
-        for i in range(0,len(_cases)):
+        # for i in range(0,len(_cases)):
             
-            for j in range(0,len(_cases[i])):
-                self._dataset.universe[j] = self._dataset.universe[j][:_number_attributes[i]] + _cases[i][j] + self._dataset.universe[j][_number_attributes[i]:]
+        #     for j in range(0,len(_cases[i])):
+        #         self._dataset.universe[j] = self._dataset.universe[j][:_number_attributes[i]] + _cases[i][j] + self._dataset.universe[j][_number_attributes[i]:]
 
-            self._dataset.attributes = self._dataset.attributes[:_number_attributes[i]] + _attribute_names[i] + self._dataset.attributes[_number_attributes[i]:]
+        #     self._dataset.attributes = self._dataset.attributes[:_number_attributes[i]] + _attribute_names[i] + self._dataset.attributes[_number_attributes[i]:]
                 
