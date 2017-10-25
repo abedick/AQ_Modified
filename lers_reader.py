@@ -51,6 +51,9 @@ class LERS_Reader:
 
                     _universe_case = [[],[]]
 
+                    _universe_case[1].append(_case[len(_case)-1])
+                    del _case[-1]
+                    
                     for i in range(0,len(_case)):
 
                         try:
@@ -60,8 +63,6 @@ class LERS_Reader:
                         except ValueError:
                             continue
 
-                    _universe_case[1].append(_case[len(_case)-1])
-                    del _case[-1]
                     _universe_case[0] = _case
 
                     self._dataset.add_to_universe(_universe_case)

@@ -23,7 +23,7 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "test_data5.d"
+        _filename = "test_data4.d"
 
         # Start the reader
         _reader = LERS_Reader(_filename)
@@ -41,7 +41,7 @@ class Controller(object):
         # self.check_consistency()
         self.check_consistency_fast()
 
-        # self.print_dataset(self._dataset)
+        self.print_dataset(self._dataset)
 
         # self._results = self._aq.run(self._dataset)
 
@@ -64,10 +64,11 @@ class Controller(object):
 
         print str(_dataset.attributes)
 
-        input = raw_input()
+        
         
         for i in range(0,len(_dataset.universe)):
             print str(_dataset.universe[i]) # + " " + str(self._dataset.decision[i])
+            # input = raw_input()
 
 
     def check_consistency(self):
@@ -176,7 +177,6 @@ class Controller(object):
         # Create the attribute attributes that were numeric and compute their ranges and append them as block to _new_attributes
         for i in range(0,len(_attribute_values)):
             _set = _attribute_values[i][1]
-
             _new_attributes.append([])
 
             for k in range(1,len(_set)):
@@ -190,8 +190,6 @@ class Controller(object):
 
                 _params = [_new_name,_range,[]]
                 _new_attributes[i].append(_params)
-
-
         _updated_uni = []
         
         # Create a multidimensional list, one dim for each of the new attribute blocks
@@ -199,7 +197,6 @@ class Controller(object):
         for i in range(0,len(self._dataset.universe)): 
             _updated_uni.append([])
             for k in range(0,len(_new_attributes)):
-
                 _new_attribute_block = []
                 for l in range(0,len(_new_attributes[k])):
                     _test_value =  self._dataset.universe[i][0][_number_attributes[k]]
@@ -210,88 +207,60 @@ class Controller(object):
                         _new_value = str(_lower[0]) + ".." + str(_lower[1])
                     else:
                         _new_value = str(_upper[0]) + ".." + str(_upper[1])
-                    
                     _new_attribute_block.append(_new_value)
 
+                _new_attribute_block = _new_attribute_block[::-1]
                 _updated_uni[i].append(_new_attribute_block)
 
-        for k in range(0,len(_updated_uni)):
-            print _updated_uni[k]
+            _updated_uni[i] = _updated_uni[i][::-1]
 
-                # for k in range(0,len(_))
+        # Delete the old columns and insert the new symbolic cases
+        _number_attributes = _number_attributes[::-1]
+        _names = []
 
-        # # For each case of the univesre
-        # for i in range(0,len(self._dataset.universe)):
+        for i in range(0,len(_new_attributes)):
+            _name_block = []
 
-        #     print self._dataset.universe[i][0]
+            for j in _new_attributes[i]:
+                _name_block.append(j[0])
 
-        #     # # For each of the numerical columns
-        #     for k in range(0,len(_new_attributes)):
+            _name_block = _name_block[::-1]
+            _names.append(_name_block)
+        _names = _names[::-1]
 
-        #         # for each of the new attributes
-        #         for l in range(0,len(_new_attributes[k])):
-        #             _case_set = set([self._dataset.universe[i][0][_number_attributes[0][k]]])
-        #             print _case_set
-        # #             # _lower_set = set(range(_new_attributes[k][l][1][0][0],_new_attributes[k][l][1][0][1]+1))
-        # #             _lower_set = set([_new_attributes[k][l][1][0][0],_new_attributes[k][l][1][0][1]])
-        # #             if _case_set.issubset(_lower_set):
-        # #                 _new_attributes[k][l][2].append(str(_new_attributes[k][l][1][0][0]) + ".." + str(_new_attributes[k][l][1][0][1]))
-        # #             else:
-        # #                 _new_attributes[k][l][2].append(str(_new_attributes[k][l][1][1][0]) + ".." + str(_new_attributes[k][l][1][1][1]))
+        _count = 0
 
+        # add the new symbolic attribute names
+        for k in _number_attributes:
+            if( (k+1) >= len(self._dataset.attributes[0])):
+                _names[_count] = _names[_count][::-1]
+                for l in _names[_count]:
+                    self._dataset.attributes[0].append(l)
+            else:
+                for l in _names[_count]:
+                    self._dataset.attributes[0].insert(k+1,l)
 
-        # # Create the matrix block of the expanded data
-        # _matrix = []
-        # for k in range(0,len(_new_attributes)):
-        #     _matrix.append([])
+            # delete the old numeric attribute
+            del self._dataset.attributes[0][k]
 
-        #     for i in range(0,len(_new_attributes[k])):
-        #         _matrix[k].append(_new_attributes[k][i][2])
+            # Keeping track of indicies
+            _count = _count+1
 
-        # _cases = []
+        # Update the rows of the universe with each new case
+        for i in range(0,len(self._dataset.universe)):
+            _count = 0
+            for k in _number_attributes:
+                # add the new symbolic block
+                if( (k+1) >= len(self._dataset.universe[i][0])):
+                    _updated_uni[i][_count] = _updated_uni[i][_count][::-1]
+                    for l in _updated_uni[i][_count]:
+                        self._dataset.universe[i][0].append(l)
+                else:
+                    for l in _updated_uni[i][_count]:
+                        self._dataset.universe[i][0].insert(k+1,l)
 
-        # # Change the axis so we are looking at it case by case instead of attribute by attribute
-        # for j in range(0,len(_matrix)):
-        #     _cases.append([[i for i in element] for element in list(izip_longest(*_matrix[j]))])
+                # delete the old numeric entry
+                del self._dataset.universe[i][0][k]
 
-
-        # # Turn everything around so its easier to add back in and remove the old attributes
-        # _number_attributes = _number_attributes[::-1]
-
-
-        # _attribute_names = []
-
-        # for k in range(0,len(_new_attributes)):
-
-        #     _attribute_block = []
-        #     for i in _new_attributes[k]:
-        #         _attribute_block.append(i[0])
-        #     _attribute_names.append(_attribute_block)
-
-        # for i in range(0,len(self._dataset.universe)):
-        #     for k in _number_attributes:
-        #         del self._dataset.universe[i][k]
-
-        # for k in _number_attributes:
-        #     del self._dataset.attributes[k]
-        
-        # # Turn the blocks around and then add them into the list back into the position where the
-        # # original numeric attributes where
-        # _cases = _cases[::-1]
-        # _attribute_names = _attribute_names[::-1]
-        # _number_attributes = _number_attributes[::-1]
-
-        # for i in range(0,len(_number_attributes)):
-        #     if i > 0:
-        #         print i
-        #         _number_attributes[i] = _number_attributes[i] - _number_attributes.index(_number_attributes[i])
-
-        # _number_attributes = _number_attributes[::-1]
-
-        # for i in range(0,len(_cases)):
-            
-        #     for j in range(0,len(_cases[i])):
-        #         self._dataset.universe[j] = self._dataset.universe[j][:_number_attributes[i]] + _cases[i][j] + self._dataset.universe[j][_number_attributes[i]:]
-
-        #     self._dataset.attributes = self._dataset.attributes[:_number_attributes[i]] + _attribute_names[i] + self._dataset.attributes[_number_attributes[i]:]
-                
+                # Keeping track of indicies
+                _count = _count+1
