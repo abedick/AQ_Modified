@@ -192,22 +192,52 @@ class Controller(object):
                 _new_attributes[i].append(_params)
 
 
+        _updated_uni = []
+        
+        # Create a multidimensional list, one dim for each of the new attribute blocks
+        # and construct the new values on a universe case by case order
+        for i in range(0,len(self._dataset.universe)): 
+            _updated_uni.append([])
+            for k in range(0,len(_new_attributes)):
+
+                _new_attribute_block = []
+                for l in range(0,len(_new_attributes[k])):
+                    _test_value =  self._dataset.universe[i][0][_number_attributes[k]]
+                    _lower = _new_attributes[k][l][1][0]
+                    _upper = _new_attributes[k][l][1][1]
+
+                    if(_test_value >= _lower[0] and _test_value <= _lower[1]):
+                        _new_value = str(_lower[0]) + ".." + str(_lower[1])
+                    else:
+                        _new_value = str(_upper[0]) + ".." + str(_upper[1])
+                    
+                    _new_attribute_block.append(_new_value)
+
+                _updated_uni[i].append(_new_attribute_block)
+
+        for k in range(0,len(_updated_uni)):
+            print _updated_uni[k]
+
+                # for k in range(0,len(_))
 
         # # For each case of the univesre
         # for i in range(0,len(self._dataset.universe)):
 
-        #     # For each of the numerical columns
+        #     print self._dataset.universe[i][0]
+
+        #     # # For each of the numerical columns
         #     for k in range(0,len(_new_attributes)):
 
         #         # for each of the new attributes
         #         for l in range(0,len(_new_attributes[k])):
-        #             _case_set = set([self._dataset.universe[i][_number_attributes[k]]])
-        #             # _lower_set = set(range(_new_attributes[k][l][1][0][0],_new_attributes[k][l][1][0][1]+1))
-        #             _lower_set = set([_new_attributes[k][l][1][0][0],_new_attributes[k][l][1][0][1]])
-        #             if _case_set.issubset(_lower_set):
-        #                 _new_attributes[k][l][2].append(str(_new_attributes[k][l][1][0][0]) + ".." + str(_new_attributes[k][l][1][0][1]))
-        #             else:
-        #                 _new_attributes[k][l][2].append(str(_new_attributes[k][l][1][1][0]) + ".." + str(_new_attributes[k][l][1][1][1]))
+        #             _case_set = set([self._dataset.universe[i][0][_number_attributes[0][k]]])
+        #             print _case_set
+        # #             # _lower_set = set(range(_new_attributes[k][l][1][0][0],_new_attributes[k][l][1][0][1]+1))
+        # #             _lower_set = set([_new_attributes[k][l][1][0][0],_new_attributes[k][l][1][0][1]])
+        # #             if _case_set.issubset(_lower_set):
+        # #                 _new_attributes[k][l][2].append(str(_new_attributes[k][l][1][0][0]) + ".." + str(_new_attributes[k][l][1][0][1]))
+        # #             else:
+        # #                 _new_attributes[k][l][2].append(str(_new_attributes[k][l][1][1][0]) + ".." + str(_new_attributes[k][l][1][1][1]))
 
 
         # # Create the matrix block of the expanded data
