@@ -34,26 +34,37 @@ class LERS_Reader:
                 if __data_row[0] == '<':
                     continue
                 elif __data_row[0] == '[':
+                    _attributes_decision = [[],[]]
+
+                    # Split the row and trim the brackets
                     _attr = __data_row.split()
                     del _attr[0]
                     del _attr[-1]
 
-                    self._dataset.decision = _attr[len(_attr)-1]
-
+                    _attributes_decision[1].append(_attr[len(_attr)-1])
                     del _attr[-1]
+                    _attributes_decision[0] = _attr
 
-                    self._dataset.attributes = _attr
+                    self._dataset.attributes = _attributes_decision
                 else:
                     _case = __data_row.split()
 
+                    _universe_case = [[],[]]
+
                     for i in range(0,len(_case)):
-                        if _case[i].isdigit():
+
+                        try:
+                            float(_case[i])
+                            _case[i] = float(_case[i])
                             self._dataset.symbolic = False
-                            _case[i] = int(_case[i])
+                        except ValueError:
+                            continue
 
-                    self._dataset.add_to_universe(_case)
+                    _universe_case[1].append(_case[len(_case)-1])
+                    del _case[-1]
+                    _universe_case[0] = _case
 
-
+                    self._dataset.add_to_universe(_universe_case)
 
     def return_data(self):
         return self._dataset

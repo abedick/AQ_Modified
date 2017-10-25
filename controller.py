@@ -38,14 +38,14 @@ class Controller(object):
             self.compute_numeric()
 
         # check for consistency
-        self.check_consistency()
+        # self.check_consistency()
         self.check_consistency_fast()
 
-        # self.print_dataset(self._dataset)
+        self.print_dataset(self._dataset)
 
-        self._results = self._aq.run(self._dataset)
+        # self._results = self._aq.run(self._dataset)
 
-        self._printer.printer(self._results,self._dataset.decision)
+        # self._printer.printer(self._results,self._dataset.decision)
 
 
     def print_dataset(self, _dataset):
@@ -56,12 +56,15 @@ class Controller(object):
         print "{d}*: " + str(_dataset.d_star)
         print "A*: " + str(_dataset.a_star)
         print "Number of attributes: " + str(len(_dataset.attributes))
-        print "All Attributers: " + str(_dataset.attributes)
-        print "Decision Name: " + str(_dataset.decision)
+        print "All Attributers: " + str(_dataset.attributes[0])
+        print "Decision Name: " + str(_dataset.attributes[1])
         print "Number of cases in universe: " + str(len(_dataset.universe))
         print "--------------------------------------------------------"
 
+
         print str(_dataset.attributes) + " " + str([_dataset.decision])
+
+        input = raw_input()
         
         for i in range(0,len(_dataset.universe)):
             print str(_dataset.universe[i]) # + " " + str(self._dataset.decision[i])
@@ -174,7 +177,11 @@ class Controller(object):
 
             _new_attributes.append([])
             
+            
+
             _set = sorted(list(set(_attribute_values[i][1])))
+
+            # print _set
 
             for k in range(1,len(_set)):
                 _new_value = (_set[k-1]+_set[k])/2
@@ -198,8 +205,8 @@ class Controller(object):
                 # for each of the new attributes
                 for l in range(0,len(_new_attributes[k])):
                     _case_set = set([self._dataset.universe[i][_number_attributes[k]]])
-                    _lower_set = set(range(_new_attributes[k][l][1][0][0],_new_attributes[k][l][1][0][1]+1))
-
+                    # _lower_set = set(range(_new_attributes[k][l][1][0][0],_new_attributes[k][l][1][0][1]+1))
+                    _lower_set = set([_new_attributes[k][l][1][0][0],_new_attributes[k][l][1][0][1]])
                     if _case_set.issubset(_lower_set):
                         _new_attributes[k][l][2].append(str(_new_attributes[k][l][1][0][0]) + ".." + str(_new_attributes[k][l][1][0][1]))
                     else:
