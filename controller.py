@@ -41,7 +41,7 @@ class Controller(object):
         self.calculate_blocks()
         self.check_consistency_fast()
 
-        self.print_dataset(self._dataset)
+        # self.print_dataset(self._dataset)
 
         self._results = self._aq.run(self._dataset)
 
