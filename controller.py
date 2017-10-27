@@ -45,7 +45,7 @@ class Controller(object):
 
         self._results = self._aq.run(self._dataset)
 
-        self._printer.printer(self._results,self._dataset.decision)
+        self._printer.printer(self._results,self._dataset.attributes[1][0])
 
 
     def print_dataset(self, _dataset):
