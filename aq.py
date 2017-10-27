@@ -83,15 +83,11 @@ class AQ:
         _partial_star = []
         _complex = None
 
-
         seed_value = self._dataset.universe[seed]
         _attributes = self._dataset.attributes
 
-        
-
         for i in neg:
-            # print "G ( " + str(seed) + " | " + str(i) + " )"
-
+            print "G ( " + str(seed) + " | " + str(i) + " )"
             _covered = False
 
             ##
@@ -119,11 +115,26 @@ class AQ:
                     for l in _selectors:
                         _new_complex.append(list(set((k,l))))
 
+                ##
+                ## Calculate subsets to be removed and then remove them
+                ##
+                _removable = []
 
+                for k in range(0,len(_new_complex)):
+                    for l in range(0,len(_new_complex)):
+                        if k != l:
+                            _outer_set = set(_new_complex[k])
+                            _inner_set = set(_new_complex[l])
+                            if _outer_set.issubset(_inner_set):
+                                _removable.append(l)
+                _removable = _removable[::-1]
+
+                for k in _removable:
+                    del _new_complex[k]
+                print _selectors
                 _complex = _new_complex
-                # print _new_complex
-
-            else:   
+            else:
+                print _selectors   
                 _complex_set = []
 
                 for j in _complex:
@@ -131,12 +142,9 @@ class AQ:
 
                 _selector_set = set(_selectors)
 
-                # print _complex_set
-
                 for j in _complex_set:
-                    if j.issubset(_selector_set):
+                    if j.issubset(_selector_set) and j != _selector_set:
                         _covered = True
-
                 if not _covered:
                     _new_complex = []
 
@@ -149,11 +157,8 @@ class AQ:
                                 _new_selectors.append(_complex[j][l])
                         _new_complex.append(list(set(_new_selectors)))
                         
-                    _complex = _new_complex 
-                       
+                    _complex = _new_complex  
             _covered_universe.append(i)
-        
         _partial_star = _complex
-
 
         return _partial_star
