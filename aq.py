@@ -128,6 +128,24 @@ class AQ:
             ## - If testing against the other rules, recompute the complex with the addition of each new selector
             ##   for each additional negative case in neg. Then remove the complexes covered by other cases.
             ##
+
+            ##
+            ## if the list of negative cases is at least one, this will be the first time tuples are built of the
+            ## conjoined selectors from the first iteration
+            ##
+            elif len(_covered_universe) == 1:
+                for j in _complex:
+                    for k in _selectors:
+                        _conjunction = (j[0],k)
+                        print "New conjunction " + str(_conjunction)
+                        _new_complex.append(list(set(_conjunction)))
+
+                _complex = _new_complex
+
+            ##
+            ## The negative universe is at least 3 cases long
+            ## The tuples of conjunctions have already been built
+            ##
             else: 
 
                 ##
@@ -136,9 +154,9 @@ class AQ:
                 ##
                 # for j in _selectors:
                 for k in _complex:   
-                    print "\nSelectors " + str(_selectors) + "\n_complex " + str(k)
+                    # print "\nSelectors " + str(_selectors) + "\n_complex " + str(k)
                     # print "(selectors).issubet(complex) " + str(set(_selectors).issubset(set(k)))
-                    print "(selectors).issuperset(complex) " + str(set(_selectors).issuperset(set(k)))
+                    # print "(selectors).issuperset(complex) " + str(set(_selectors).issuperset(set(k)))
                     # print "Len condition: " + str((len(_selectors) > len(k))) + "\n\n"
 
                     if set(_selectors) == set(k):
@@ -150,15 +168,6 @@ class AQ:
                         print "Case : " + str(i) + " is covered by superset condition."
                         break
 
-                    # if set(_selectors).issubset(set(k)):
-                    #     _covered = True
-                    #     print "Case : " + str(i) + " is covered."
-                    #     break
-                    # elif set(_selectors).issuperset(set(k)) and (len(_selectors) > len(k)):
-                    #     _covered = True
-                    #     print "Case : " + str(i) + " is covered."
-                    #     break
-
                 ##
                 ## If not already covered, compute the new complexes
                 ##
@@ -169,11 +178,12 @@ class AQ:
                     ##
                     for j in _selectors:
                         for k in _complex:
-                            # print "New selector: " + str(j)
-                            # print "Existing complex: " + str(k)
+                            print "New selector: " + str(j)
+                            print "Existing complex: " + str(k)
                             _new_conjunction = k
-                            _new_conjunction.append(j)
-                            # print "New conjunction: " + str(_new_conjunction) + "\n\n\n"
+                            _new_conjunction += (j, )
+                            print "New conjunction: " + str(list(set(_new_conjunction))) + "\n\n\n"
+                            print set(_new_conjunction)
                             _new_complex.append(list(set(_new_conjunction)))
 
                     ##
@@ -195,11 +205,15 @@ class AQ:
             ##
             _covered_universe.append(i)
 
+            ##
+            ## DEBUG ONLY
+            ##
             test = raw_input()
 
         ##
         ## Return _complex as the working partial star
         ##
+        print "Partial star: " + str(_complex)
         return _complex
 
         ##
