@@ -88,7 +88,7 @@ class AQ:
 
         for i in neg:
             print "G ( " + str(seed) + " | " + str(i) + " )"
-            print "Current Complex: " + str(_complex)
+            # print "Current Complex: " + str(_complex)
 
             _new_complex = []
 
@@ -137,8 +137,24 @@ class AQ:
                 for j in _complex:
                     for k in _selectors:
                         _conjunction = (j[0],k)
-                        print "New conjunction " + str(_conjunction)
                         _new_complex.append(list(set(_conjunction)))
+
+                ##
+                ## Remove subsumed complexes
+                ##
+                _removable = []
+
+                for j in range(0,len(_new_complex)):
+                    for k in range(0,len(_new_complex)):
+                        if j != k and set(_new_complex[j]).issubset(set(_new_complex[k])):
+                            _removable.append(k)
+
+                _removable = list(set(_removable))
+                _removable.sort()
+                _removable = _removable[::-1]
+
+                for j in _removable:
+                    del _new_complex[j]
 
                 _complex = _new_complex
 
@@ -152,16 +168,12 @@ class AQ:
                 ## Check if the new selectors are already covered in the complex
                 ## updateds _covered to reflect accordingly
                 ##
-                # for j in _selectors:
                 for k in _complex:   
-                    # print "\nSelectors " + str(_selectors) + "\n_complex " + str(k)
-                    # print "(selectors).issubet(complex) " + str(set(_selectors).issubset(set(k)))
-                    # print "(selectors).issuperset(complex) " + str(set(_selectors).issuperset(set(k)))
-                    # print "Len condition: " + str((len(_selectors) > len(k))) + "\n\n"
-
                     if set(_selectors) == set(k):
                         _covered = True
                         print "Case : " + str(i) + " is covered by equality condition."
+                        print _selectors
+                        print k
                         break
                     elif set(_selectors).issuperset(set(k)) and len(_covered_universe) > 1:
                         _covered = True
@@ -171,24 +183,47 @@ class AQ:
                 ##
                 ## If not already covered, compute the new complexes
                 ##
-
                 if not _covered:
                     ##
                     ## Compute new complex
                     ##
+                    # for k in _complex:
+                    #     print "Old Complex Rule " + str(k)
+                    # print "New selectors availiable: " + str(_selectors)
+
                     for j in _selectors:
                         for k in _complex:
-                            print "New selector: " + str(j)
-                            print "Existing complex: " + str(k)
-                            _new_conjunction = k
-                            _new_conjunction += (j, )
-                            print "New conjunction: " + str(list(set(_new_conjunction))) + "\n\n\n"
-                            print set(_new_conjunction)
-                            _new_complex.append(list(set(_new_conjunction)))
+                            if j != k:
+                                _new_conjunction = []
 
-                    ##
-                    ## Remove subsumed complexes
-                    ##
+                                for each in k:
+                                    _new_conjunction.append(each)
+
+                                _new_conjunction += (j, )
+                                # print "New conjunction: " + str(list(set(_new_conjunction)))
+                                _new_complex.append(list(set(_new_conjunction)))
+
+                    # ##
+                    # ## Remove subsumed complexes
+                    # ##
+                    _removable = []
+
+                    for j in range(0,len(_new_complex)):
+                        for k in range(0,len(_new_complex)):
+                            if j != k and set(_new_complex[j]).issubset(set(_new_complex[k])):
+                                _removable.append(k)
+
+                    _removable = list(set(_removable))
+                    _removable.sort()
+                    _removable = _removable[::-1]
+
+                    # print _removable
+
+                    # test = raw_input()
+
+                    for j in _removable:
+                        if len(_new_complex) > 1:
+                            del _new_complex[j]
 
                     ##
                     ## Remove worse complexes from the partial star until size STAR <= MAXSTAR
@@ -208,78 +243,14 @@ class AQ:
             ##
             ## DEBUG ONLY
             ##
-            test = raw_input()
+            # test = raw_input()
 
         ##
         ## Return _complex as the working partial star
         ##
-        print "Partial star: " + str(_complex)
+        # print "Partial star: " + str(_complex) + "\n\n\n"
         return _complex
 
         ##
         ## END PARTIAL STAR PROCEDURE
         ##
-
-                # _new_complex = []
-
-                # for k in _complex:
-                #     for l in _selectors:
-                #         _new_complex.append(list(set((k,l))))
-                    
-                # print _new_complex
-                # _complex = _new_complex
-
-            # elif len(_covered_universe) == 1:
-            #     _new_complex = []
-
-            #     for k in _complex:
-            #         for l in _selectors:
-            #             _new_complex.append(list(set((k,l))))
-
-            #     ##
-            #     ## Calculate subsets to be removed and then remove them
-            #     ##
-            #     _removable = []
-
-            #     for k in range(0,len(_new_complex)):
-            #         for l in range(0,len(_new_complex)):
-            #             if k != l:
-            #                 _outer_set = set(_new_complex[k])
-            #                 _inner_set = set(_new_complex[l])
-            #                 if _outer_set.issubset(_inner_set):
-            #                     _removable.append(l)
-            #     _removable = _removable[::-1]
-
-            #     for k in _removable:
-            #         del _new_complex[k]
-            #     print _selectors
-            #     _complex = _new_complex
-            # else:
-                # print _selectors   
-                # _complex_set = []
-
-                # for j in _complex:
-                #     _complex_set.append(set(j))
-
-                # _selector_set = set(_selectors)
-
-                # for j in _complex_set:
-                #     if j.issubset(_selector_set) and j != _selector_set:
-                #         _covered = True
-                # if not _covered:
-                #     _new_complex = []
-
-                #     for j in range(0,len(_complex)):
-                #         _new_selectors = []
-
-                #         for k in _selectors:
-                #             _new_selectors.append(k)
-                #             for l in range(0,len(_complex[j])):
-                #                 _new_selectors.append(_complex[j][l])
-                #         _new_complex.append(list(set(_new_selectors)))
-                        
-                #     _complex = _new_complex  
-            # _covered_universe.append(i)
-        # _partial_star = _complex
-
-        # return _partial_star
