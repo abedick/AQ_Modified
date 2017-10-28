@@ -110,7 +110,7 @@ class AQ:
                 _seed_attribute = self._dataset.universe[seed][0][j]
 
                 if _universe_attribute != _seed_attribute:
-                    _selector = (str(self._dataset.attributes[0][j]),"NOT " + str(self._dataset.universe[i][0][j]))
+                    _selector = "(" + str(self._dataset.attributes[0][j]) + ", NOT " + str(self._dataset.universe[i][0][j]) + ")"
                     _selectors.append(_selector)
 
             ##
@@ -167,14 +167,12 @@ class AQ:
                     ##
                     ## Compute new complex
                     ##
+
                     for j in _selectors:
-                        for k in _complex:
-                            # print "New selector: " + str(j)
-                            # print "Existing complex: " + str(k)
-                            _new_conjunction = k
-                            _new_conjunction.append(j)
-                            # print "New conjunction: " + str(_new_conjunction) + "\n\n\n"
-                            _new_complex.append(list(set(_new_conjunction)))
+                        for l in _complex:
+                            _new_conjunction = (l,j)
+                            print "New conjunction: " + str(_new_conjunction) + "\n\n\n"
+                            _new_complex.append(_new_conjunction)
 
                     ##
                     ## Remove subsumed complexes
