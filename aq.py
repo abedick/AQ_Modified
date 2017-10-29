@@ -133,6 +133,8 @@ class AQ:
             ## if the list of negative cases is at least one, this will be the first time tuples are built of the
             ## conjoined selectors from the first iteration
             ##
+
+            
             elif len(_covered_universe) == 1:
                 for j in _complex:
                     for k in _selectors:
@@ -146,6 +148,7 @@ class AQ:
 
                 for j in range(0,len(_new_complex)):
                     for k in range(0,len(_new_complex)):
+                        print str(j) + " " + str(k)
                         if j != k and set(_new_complex[j]).issubset(set(_new_complex[k])):
                             _removable.append(k)
 
@@ -154,7 +157,8 @@ class AQ:
                 _removable = _removable[::-1]
 
                 for j in _removable:
-                    del _new_complex[j]
+                    if len(_new_complex) > 1:
+                        del _new_complex[j]
 
                 _complex = _new_complex
 
