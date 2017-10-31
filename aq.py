@@ -13,7 +13,7 @@ class AQ:
 
     def __init__(self):
         self._dataset = None
-
+        self._maxstar = 1
         self._completed_concepts = []
 
 
@@ -159,6 +159,53 @@ class AQ:
                 for j in _removable:
                     if len(_new_complex) > 1:
                         del _new_complex[j]
+                
+                ##
+                ## Remove worse complexes from the partial star until size STAR <= MAXSTAR
+                ##
+                while len(_new_complex) > self._maxstar:
+                    _new_complex_mod = []
+
+                    for j in _new_complex:
+                        _mod = []
+                        for k in j:
+                            _new = (k[0], k[1][4::])
+                            _mod.append(_new)
+                        _new_complex_mod.append(_mod)
+                    _pos = list(set(range(0,len(self._dataset.universe))) - set(neg))
+                    _test_universe = []
+                
+                    for j in _pos:
+                        _comparison = []
+
+                        for l in range(0,len(self._dataset.universe[j][0])):
+                            _case_update = (self._dataset.attributes[0][l],self._dataset.universe[j][0][l])
+                            _comparison.append(_case_update)
+                        _test_universe.append(_comparison)
+                    _cover_list = []
+                    
+                    for j in _new_complex_mod:
+                        _list = []
+                        for k in range(0,len(_test_universe)):
+                            _flag = True
+                            for l in j:
+                                for m in range(0,len(_test_universe[k])):
+                                    if l == _test_universe[k][m]:
+                                        _flag = False
+                            if _flag:
+                                _list.append(k)
+                        _cover_list.append(_list)
+
+                    for j in range(0,len(_cover_list)):
+                        _cover_list[j] = len(_cover_list[j])
+                    _index_remove = -1
+                    _count = 0
+
+                    for j in range(0,len(_cover_list)):
+                        if _cover_list[j] > _count:
+                            _count = _cover_list[j]
+                            _index_remove = j
+                    del _new_complex[_index_remove]
 
                 _complex = _new_complex
 
@@ -176,8 +223,6 @@ class AQ:
                     if set(_selectors) == set(k):
                         _covered = True
                         print "Case : " + str(i) + " is covered by equality condition."
-                        print _selectors
-                        print k
                         break
                     elif set(_selectors).issuperset(set(k)) and len(_covered_universe) > 1:
                         _covered = True
@@ -191,9 +236,6 @@ class AQ:
                     ##
                     ## Compute new complex
                     ##
-                    # for k in _complex:
-                    #     print "Old Complex Rule " + str(k)
-                    # print "New selectors availiable: " + str(_selectors)
 
                     for j in _selectors:
                         for k in _complex:
@@ -204,7 +246,6 @@ class AQ:
                                     _new_conjunction.append(each)
 
                                 _new_conjunction += (j, )
-                                # print "New conjunction: " + str(list(set(_new_conjunction)))
                                 _new_complex.append(list(set(_new_conjunction)))
 
                     # ##
@@ -221,10 +262,6 @@ class AQ:
                     _removable.sort()
                     _removable = _removable[::-1]
 
-                    # print _removable
-
-                    # test = raw_input()
-
                     for j in _removable:
                         if len(_new_complex) > 1:
                             del _new_complex[j]
@@ -232,6 +269,49 @@ class AQ:
                     ##
                     ## Remove worse complexes from the partial star until size STAR <= MAXSTAR
                     ##
+                    while len(_new_complex) > self._maxstar:
+                        _new_complex_mod = []
+
+                        for j in _new_complex:
+                            _mod = []
+                            for k in j:
+                                _new = (k[0], k[1][4::])
+                                _mod.append(_new)
+                            _new_complex_mod.append(_mod)
+                        _pos = list(set(range(0,len(self._dataset.universe))) - set(neg))
+                        _test_universe = []
+                    
+                        for j in _pos:
+                            _comparison = []
+
+                            for l in range(0,len(self._dataset.universe[j][0])):
+                                _case_update = (self._dataset.attributes[0][l],self._dataset.universe[j][0][l])
+                                _comparison.append(_case_update)
+                            _test_universe.append(_comparison)
+                        _cover_list = []
+                        
+                        for j in _new_complex_mod:
+                            _list = []
+                            for k in range(0,len(_test_universe)):
+                                _flag = True
+                                for l in j:
+                                    for m in range(0,len(_test_universe[k])):
+                                        if l == _test_universe[k][m]:
+                                            _flag = False
+                                if _flag:
+                                    _list.append(k)
+                            _cover_list.append(_list)
+
+                        for j in range(0,len(_cover_list)):
+                            _cover_list[j] = len(_cover_list[j])
+                        _index_remove = -1
+                        _count = 0
+
+                        for j in range(0,len(_cover_list)):
+                            if _cover_list[j] > _count:
+                                _count = _cover_list[j]
+                                _index_remove = j
+                        del _new_complex[_index_remove]
 
                     ##
                     ## Update the partial star 

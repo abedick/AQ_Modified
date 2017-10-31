@@ -1,0 +1,6 @@
+('sepal_width_3.55', 'NOT 3.55..4.4') AND ('sepal_width_3.45', 'NOT 2.0..3.45') -> (class, Iris-setosa)
+
+('sepal_length_6.25', 'NOT 4.3..6.25') AND ('sepal_length_7.05', 'NOT 7.05..7.9') AND ('sepal_length_6.95', 'NOT 4.3..6.95') AND ('sepal_length_6.05', 'NOT 4.3..6.05') AND ('sepal_length_6.15', 'NOT 4.3..6.15') AND ('sepal_length_6.85', 'NOT 4.3..6.85') AND ('sepal_length_6.55', 'NOT 4.3..6.55') AND ('sepal_length_6.45', 'NOT 4.3..6.45') AND ('sepal_length_5.65', 'NOT 4.3..5.65') AND ('sepal_length_5.95', 'NOT 4.3..5.95') AND ('sepal_length_6.35', 'NOT 4.3..6.35') AND ('petal_width_1.75', 'NOT 1.75..2.5') AND ('sepal_length_6.75', 'NOT 4.3..6.75') AND ('sepal_length_5.75', 'NOT 4.3..5.75') AND ('sepal_length_5.85', 'NOT 4.3..5.85') AND ('petal_width_2.05', 'NOT 2.05..2.5') -> (class, Iris-versicolor)
+
+('sepal_width_2.85', 'NOT 2.85..4.4') AND ('petal_width_2.05', 'NOT 0.1..2.05') -> (class, Iris-viginica)
+
