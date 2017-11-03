@@ -16,6 +16,7 @@ class Dataset(object):
         self._attributes = []
         self._decision = None
         self._universe = []
+        self._attribute_range = []
         self._symbolic = True
         self._d_star = None
         self._a_star = None
@@ -48,7 +49,6 @@ class Dataset(object):
     def add_to_universe(self, value):
         self._universe.append(value)
 
-
     @property
     def symbolic(self):
         return self._symbolic
@@ -56,11 +56,6 @@ class Dataset(object):
     @symbolic.setter
     def symbolic(self, value):
         self._symbolic = value
-
-    # D Star is as such
-    # Multi-dim array where at [i], [i][0] is the string of the decision and 
-    #   [i][1] is a list of the indecies of the cases in the universe in which that
-    #   decision is present
 
     @property
     def d_star(self):
@@ -85,3 +80,11 @@ class Dataset(object):
     @consistent.setter
     def consistent(self, value):
         self._consistent = value
+
+    @property
+    def attribute_range(self):
+        return self._attribute_range
+
+    @attribute_range.setter
+    def attribute_range(self, value):
+        self._attribute_range = value

@@ -23,23 +23,29 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "test_data.d"
+        _filename = "jgbdata6.d"
 
         # Start the reader
         _reader = LERS_Reader(_filename)
 
         _reader.read_file()
 
+        
+
         # Grab the data from the file
         self._dataset = _reader.return_data()
+
+        ##
+        ## Preprocessing
+        ##
 
         # Check if the data is symbolic or numeric
         if not(self._dataset.symbolic):
             self.compute_numeric()
 
-        # check for consistency
         self.calculate_blocks()
         self.check_consistency_fast()
+        self.get_attribute_range()
 
         # self.print_dataset(self._dataset)
 
@@ -56,20 +62,17 @@ class Controller(object):
         print "{d}*: " + str(_dataset.d_star)
         print "Number of attributes: " + str(len(_dataset.attributes[0]))
         print "All Attributers: " + str(_dataset.attributes[0])
-        print "Decision Name: " + str(_dataset.attributes[1])
+        print "Attribute Ranges: " + str(_dataset.attribute_range)
+        print "Decision Name: " + str(_dataset.attributes[1][0])
         print "Number of cases in universe: " + str(len(_dataset.universe))
         print "--------------------------------------------------------"
-
-
         print str(_dataset.attributes)
+        for i in range(0,len(_dataset.universe)):
+            print str(_dataset.universe[i])
 
-        
-        
-        # for i in range(0,len(_dataset.universe)):
-        #     print str(_dataset.universe[i]) # + " " + str(self._dataset.decision[i])
-        #     # input = raw_input()
-
-    # Calculateds {d}*
+    ###
+    ### Calculates the concept blacks {d}*
+    ###
     def calculate_blocks(self):
         _case_decision = []
 
@@ -90,6 +93,10 @@ class Controller(object):
                         _placed = True
         self._dataset._d_star = _block
 
+    ###
+    ### Quickly checks to see if the dataset is consistent
+    ### Terminates as soon as first inconsistency is found
+    ###
     def check_consistency_fast(self):
         _case_decision = len(self._dataset.universe[0]) - 1
 
@@ -106,7 +113,30 @@ class Controller(object):
                 if ((i != k) and (_test_case == _compare_case) and (_test_case_decision != _compare_case_decision)):
                     self._dataset.consistent = False
                     break
+
+    ###
+    ### For each attribute, get all possible values
+    ### This will be helpful for building rules w/out negation
+    ###
+    def get_attribute_range(self):
+        _attribute_sets = []
+
+        for i in range(0,len(self._dataset.attributes[0])):
+            _attribute_sets.append([])
+
+        for i in range(0,len(self._dataset.universe)):
+            for k in range(0,len(self._dataset.attributes[0])):
+                _attribute_sets[k].append(self._dataset.universe[i][0][k])
+
+        for i in range(0,len(_attribute_sets)):
+            _attribute_sets[i] = list(set(_attribute_sets[i]))
+
+        self._dataset.attribute_range = _attribute_sets
     
+    ###
+    ### If a numeric attribute was read in from file, compute_numeric
+    ### recalculates the attribute according to cutpoint method
+    ###
     def compute_numeric(self):
         _number_attributes = []
 

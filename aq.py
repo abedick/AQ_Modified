@@ -13,10 +13,8 @@ class AQ:
 
     def __init__(self):
         self._dataset = None
-        self._maxstar = 1
+        self._maxstar = 20
         self._completed_concepts = []
-
-
 
     def run(self, dataset):
         self._dataset = dataset
@@ -36,46 +34,54 @@ class AQ:
 
             _result.append([[self._dataset.d_star[i][0]],self.AQ_star(_pos,_neg)])
 
-
-
-        # _pos = set(self._dataset.d_star[0][1])
-        # _neg = set(range(0,len(self._dataset.universe)))
-
-        # _neg = list(_neg.difference(_pos))
-        # _pos = list(_pos)
-
-        # print "C = " + str(_pos)
-        # print "F = " + str(_neg)
-
-        # _result.append([[self._dataset.d_star[0][0]],self.AQ_star(_pos,_neg)])
-
         return _result
 
     def AQ_star(self,pos,neg):
         
         _cover = []
 
-        _uncovered = neg
+        ##
+        ## For each case, send the seed only if the seed is not already covered by the 
+        ## exsiting partial star
+        ##
 
-        # # for b in pos:
-        # for i in neg:
+        ##
+        ## Debug
+        ##
+        # pos = [pos[0]]
 
-            # print "Seed: " + str(b)
-        _partial = self.partial_star(pos[0],neg)
+        for b in pos:
+            print "Seed: " + str(b)
 
-            # # Computing the set of covers
-            # if _cover != []:
+            ##
+            ## Calculate the new partial
+            ##
+            _partial = self.partial_star(b,neg)
 
-            #     for j in range(0,len(_cover)):
-            #         for k in range(0,len(_cover[j])):
-            #             for l in range(0,len(_partial)):
+            ##
+            ## Check if the new partial is already covered by the cover
+            ##
+            _covered = []
 
-            #                 print "Cover: " + str(_cover[j][k])
-            #                 print "Partial: " + str(_partial[l])
+            for i in range(0,len(_partial)):
+                for k in range(0,len(_cover)):
+                    if _cover[k] == _partial[i]:
+                        _covered.append(i)
 
-        _cover.append(_partial)
+            if _covered != []:
+                _covered = sorted(list(set(_covered)))
+                _covered = _covered[::-1]
 
-        return _partial
+                for i in _covered:
+                    del _partial[i]
+
+
+            ##
+            ## Add the new partial to the cover
+            ##
+            _cover += _partial
+
+        return _cover
 
     def partial_star(self,seed,neg):
         _covered_universe = []
@@ -87,7 +93,7 @@ class AQ:
         _attributes = self._dataset.attributes
 
         for i in neg:
-            print "G ( " + str(seed) + " | " + str(i) + " )"
+            # print "G ( " + str(seed) + " | " + str(i) + " )"
             # print "Current Complex: " + str(_complex)
 
             _new_complex = []
@@ -145,11 +151,13 @@ class AQ:
                 ## Remove subsumed complexes
                 ##
                 _removable = []
-
+                
+                # print _new_complex
                 for j in range(0,len(_new_complex)):
                     for k in range(0,len(_new_complex)):
-                        print str(j) + " " + str(k)
+                        # print str(j) + " " + str(k)
                         if j != k and set(_new_complex[j]).issubset(set(_new_complex[k])):
+                            # print True
                             _removable.append(k)
 
                 _removable = list(set(_removable))
@@ -221,12 +229,10 @@ class AQ:
                 ##
                 for k in _complex:   
                     if set(_selectors) == set(k):
-                        _covered = True
-                        print "Case : " + str(i) + " is covered by equality condition."
-                        break
+                        continue
                     elif set(_selectors).issuperset(set(k)) and len(_covered_universe) > 1:
                         _covered = True
-                        print "Case : " + str(i) + " is covered by superset condition."
+                        # print "Case : " + str(i) + " is covered by superset condition."
                         break
 
                 ##
