@@ -23,7 +23,7 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "jgbdata6.d"
+        _filename = "test_data.d"
 
         # Start the reader
         _reader = LERS_Reader(_filename)
