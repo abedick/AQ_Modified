@@ -23,7 +23,7 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "jgbdata.d"
+        _filename = "test_data.d"
 
         # Start the reader
         _reader = LERS_Reader(_filename)
@@ -50,6 +50,7 @@ class Controller(object):
         self._results = self._aq.run(self._dataset)
 
         _non_negated = self.results_helper(self._results)
+        # _non_negated = []
         _negated = self.negated_results_helper(self._results)
 
         _processed_results = [_non_negated,_negated]
@@ -344,7 +345,9 @@ class Controller(object):
                 if len(rule) > 1:
 
                     ## Simplify new expanded rules
+
                     for i in range(len(rule)):
+                        print rule[i]
                         rule[i] = list(set(rule[i]))
 
                     _to_remove = []

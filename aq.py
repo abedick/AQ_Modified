@@ -13,8 +13,11 @@ class AQ:
 
     def __init__(self):
         self._dataset = None
-        self._maxstar = 20
+        self._maxstar = 1
         self._completed_concepts = []
+
+        self._pos = None
+        self._neg = None
 
     def run(self, dataset):
         self._dataset = dataset
@@ -28,6 +31,9 @@ class AQ:
 
             _neg = list(_neg.difference(_pos))
             _pos = list(_pos)
+
+            self._neg = _neg
+            self._pos = _pos
 
             # print "C = " + str(_pos)
             # print "F = " + str(_neg)
@@ -174,6 +180,7 @@ class AQ:
 
         for j in range(0,len(new_complex)):
             for k in range(0,len(new_complex)):
+                # print str(j) + " " + str(k)
                 if j != k and set(new_complex[j]).issubset(set(new_complex[k])):
                     _removable.append(k)
 
@@ -197,7 +204,7 @@ class AQ:
                     _new = (k[0], k[1][4::])
                     _mod.append(_new)
                 _new_complex_mod.append(_mod)
-            _pos = list(set(range(0,len(self._dataset.universe))) - set(neg))
+            _pos = list(set(range(0,len(self._dataset.universe))) - set(self._neg))
             _test_universe = []
         
             for j in _pos:
