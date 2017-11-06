@@ -316,11 +316,47 @@ class Controller(object):
             
             _new_rules.append(_new_concept_rules)
         
-        for i in _new_rules:
-            for j in i:
-                print j
+
+        _processed_rules = []
+
+
+    
+        for i in range(len(_new_rules)):
+            _concept_rules = []
+            for j in range(len(_new_rules[i])):
+                _working_rules = []
+
+                for k in range(len(_new_rules[i][j])):
+                    _update = []
+
+                    if _working_rules == []:
+                        for l in range(len(_new_rules[i][j][k])):
+                            _update.append(_new_rules[i][j][k][l])
+                    else:
+                        for l in range(len(_new_rules[i][j][k])):
+                            for m in range(len(_working_rules)):
+                                _new = [_working_rules[m]]
+                                _new.append(_new_rules[i][j][k][l])
+                                _update.append(_new)
+
+                    _working_rules = _update
+                _concept_rules.append(_working_rules)
+            _processed_rules.append(_concept_rules)
+
+
+
+        for concept in _processed_rules:
+            for rule in concept:
+                if len(rule) > 1:
+                    for subrule in rule:
+                        print subrule
+                else:
+                    print rule
             print
-            
+
+
+                
+
 
 
 
