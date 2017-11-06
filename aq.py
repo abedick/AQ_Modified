@@ -29,8 +29,8 @@ class AQ:
             _neg = list(_neg.difference(_pos))
             _pos = list(_pos)
 
-            print "C = " + str(_pos)
-            print "F = " + str(_neg)
+            # print "C = " + str(_pos)
+            # print "F = " + str(_neg)
 
             _result.append([[self._dataset.d_star[i][0]],self.AQ_star(_pos,_neg)])
 
@@ -40,27 +40,15 @@ class AQ:
         
         _cover = []
 
-        ##
         ## For each case, send the seed only if the seed is not already covered by the 
         ## exsiting partial star
-        ##
-
-        ##
-        ## Debug
-        ##
-        # pos = [pos[0]]
-
         for b in pos:
-            print "Seed: " + str(b)
+            # print "Seed: " + str(b)
 
-            ##
             ## Calculate the new partial
-            ##
             _partial = self.partial_star(b,neg)
 
-            ##
             ## Check if the new partial is already covered by the cover
-            ##
             _covered = []
 
             for i in range(0,len(_partial)):
@@ -75,10 +63,7 @@ class AQ:
                 for i in _covered:
                     del _partial[i]
 
-
-            ##
             ## Add the new partial to the cover
-            ##
             _cover += _partial
 
         return _cover

@@ -30,8 +30,6 @@ class Controller(object):
 
         _reader.read_file()
 
-        
-
         # Grab the data from the file
         self._dataset = _reader.return_data()
 
@@ -51,7 +49,16 @@ class Controller(object):
 
         self._results = self._aq.run(self._dataset)
 
-        self._printer.printer(self._results,self._dataset.attributes[1][0])
+        _non_negated = self.results_helper(self._results)
+        _negated = self.negated_results_helper(self._results)
+
+        _processed_results = [_non_negated,_negated]
+
+        self._printer.printer(_processed_results)
+        
+        #  = self.results_helper(self._results)
+
+        # self._printer.printer(self._results,self._dataset.attributes[1][0],self._dataset.attributes[0],self._dataset.attribute_range)
 
 
     def print_dataset(self, _dataset):
@@ -253,3 +260,68 @@ class Controller(object):
 
                 # Keeping track of indicies
                 _count = _count+1
+
+
+    def negated_results_helper(self,_results):
+        _rules = []
+
+        if(not self._dataset.consistent):
+            _rules.append("! The input data set is inconsistent")
+
+        for i in range(0,len(_results)):
+            for j in range(0,len(_results[i][1])):
+                _rule = ""
+
+                for k in range(0,len(_results[i][1][j])):
+                    _rule = _rule + "(" + str(_results[i][1][j][k][0]) + ", " + str(_results[i][1][j][k][1]) + ")"
+                    
+                    if ((len(_results[i][1][j][k]) > 1) and (k != len(_results[i][1][j])-1)):
+                           _rule = _rule + " AND "
+
+                _rule = _rule + " -> (" + str(self._dataset.attributes[1][0]) + ", " + str(_results[i][0][0][0]) + ")"
+                _rules.append(_rule)
+        return _rules
+                
+    
+    def results_helper(self,_results):
+        _new_rules = []
+
+        ## For each concepts' rule set
+        for i in range(0,len(_results)):
+            _new_concept_rules = []
+
+            ## For each rule
+            for j in range(0,len(_results[i][1])):
+                _current_working_rule = _results[i][1][j]
+                _new_rule = []
+
+                ## For each conjunction/selector
+                for k in range(0,len(_current_working_rule)):
+                    _working_attribute = _current_working_rule[k][0]
+                    _working_attribute_value = _current_working_rule[k][1][4::]
+                   
+                    for l in range(0,len(self._dataset.attributes[0])):
+                        if _working_attribute == self._dataset.attributes[0][l]:
+                            _new_attribute_values = list(set(self._dataset.attribute_range[l]) - set([_working_attribute_value]))
+                            _new_av_pairs = []
+
+                            for m in range(0,len(_new_attribute_values)):
+                                _new_av_pairs.append((_working_attribute,_new_attribute_values[m]))
+
+                                if _new_av_pairs not in _new_rule:
+                                    _new_rule.append(_new_av_pairs)
+
+                    if _new_rule not in _new_concept_rules:
+                        _new_concept_rules.append(_new_rule)
+            
+            _new_rules.append(_new_concept_rules)
+        
+        for i in _new_rules:
+            for j in i:
+                print j
+            print
+            
+
+
+
+        return _new_rules

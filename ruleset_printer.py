@@ -1,20 +1,23 @@
-
+# @file: ruleset_printer.py
+# @author: Abraham Dick
+# @date: October 2017
+# @desc: Creates the two files needed for processed rules
 
 class Printer(object):
 
     def __init__(self):
         self._rules = None
 
-    def printer(self,rules,decision):
+    def printer(self,rules):
+        self.rules(rules[0])
+        self.negation(rules[1])
+
+    def negation(self,rules):
         with open("my-data.with.negation.rul",'w') as output:
-            for i in range(0,len(rules)):
-                for j in range(0,len(rules[i][1])):
-                    for k in range(0,len(rules[i][1][j])):
-                        output.write(str(rules[i][1][j][k]))
+            for i in rules:
+                output.write(str(i) + "\n")
 
-                        if ((len(rules[i][1][j][k]) > 1) and (k != len(rules[i][1][j])-1)):
-                            output.write(" AND ")
-                    output.write(" -> (" + str(decision) + ", " + str(rules[i][0][0][0]) + ")")
-                    output.write("\n")
-                output.write("\n")
-
+    def rules(self,rules):
+        with open("my-data.without.negation.rul",'w') as output:
+            for i in rules:
+                output.write(str(i) + "\n")
