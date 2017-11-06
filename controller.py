@@ -348,14 +348,69 @@ class Controller(object):
         for concept in _processed_rules:
             for rule in concept:
                 if len(rule) > 1:
+
+                    ## Simplify new expanded rules
+                    for i in range(len(rule)):
+                        rule[i] = list(set(rule[i]))
+
+                    _to_remove = []
+
+                    for i in range(len(rule)):
+                        for j in range(len(rule)):
+                            if j != i:
+                                if set(rule[i]).issubset(set(rule[j])):
+                                    _to_remove.append(j)
+                    _to_remove = _to_remove[::-1]
+
+                    for i in _to_remove:
+                        del rule[i]
+
+        _new_concept_rules = []
+
+        for concept in _processed_rules:
+            _rules = []
+            for rule in concept:
+                if len(rule) > 1:
                     for subrule in rule:
-                        print subrule
+                        _rules.append(subrule)
                 else:
-                    print rule
-            print
+                    _rules.append(subrule)
+            _new_concept_rules.append(_rules)
 
 
+
+
+        # for i in range(len(_new_concept_rules)):
+
+        #     _to_remove = []
+
+        #     for j in range(len(_new_concept_rules[i])):
+        #         for k in range(len(_new_concept_rules[i])):
+        #             if j != k:
+        #                 # print "Comparing: " + str(_new_concept_rules[i][j]) + " With " + str(_new_concept_rules[i][k])
+        #                 if set(_new_concept_rules[i][j]).issubset(set(_new_concept_rules[i][k])):
+        #                     _to_remove.append(k)
+
+
+        #     for j in range(len(_new_concept_rules[i])):
+        #         _attr = []
                 
+        #         for k in range(len(_new_concept_rules[i][j])):
+        #             _attr.append(_new_concept_rules[i][j][k][0])
+
+        #         if len(list(set(_attr))) == 1 and len(_new_concept_rules[i][j]) != 1:
+        #             _to_remove.append(k)
+
+        #     _to_remove.sort()
+        #     _to_remove = _to_remove[::-1]
+
+        #     for j in _to_remove:
+        #         del _new_concept_rules[i][j]
+
+        for concept in _new_concept_rules:
+            for rule in concept:
+                print rule
+            print        
 
 
 
