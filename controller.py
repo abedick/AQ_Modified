@@ -23,7 +23,7 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "test_data.d"
+        _filename = "jgbdata.d"
 
         # Start the reader
         _reader = LERS_Reader(_filename)
@@ -315,12 +315,8 @@ class Controller(object):
                         _new_concept_rules.append(_new_rule)
             
             _new_rules.append(_new_concept_rules)
-        
-
         _processed_rules = []
 
-
-    
         for i in range(len(_new_rules)):
             _concept_rules = []
             for j in range(len(_new_rules[i])):
@@ -343,8 +339,6 @@ class Controller(object):
                 _concept_rules.append(_working_rules)
             _processed_rules.append(_concept_rules)
 
-
-
         for concept in _processed_rules:
             for rule in concept:
                 if len(rule) > 1:
@@ -355,64 +349,79 @@ class Controller(object):
 
                     _to_remove = []
 
+                    ## Remove rules that are supersets of other rules
                     for i in range(len(rule)):
                         for j in range(len(rule)):
                             if j != i:
                                 if set(rule[i]).issubset(set(rule[j])):
                                     _to_remove.append(j)
-                    _to_remove = _to_remove[::-1]
 
+                    _to_remove.sort()
+                    _to_remove = _to_remove[::-1]
                     for i in _to_remove:
                         del rule[i]
 
-        _new_concept_rules = []
+                    _to_remove = []
+
+                    ## Remove rules that have two or more values for the same attribute
+                    for j in range(len(rule)):
+                        _attributes_repsrented = []
+
+                        for i in range(len(rule[j])):
+                            _attributes_repsrented.append(rule[j][i][0])
+
+                        if len(set(_attributes_repsrented)) == 1 and len(rule[j]) > 1:
+                            _to_remove.append(j)
+                    _to_remove.sort()
+                    _to_remove = _to_remove[::-1]
+                    for i in _to_remove:
+                        del rule[i]
+
+        _rule_set = []
 
         for concept in _processed_rules:
-            _rules = []
+            _completed_concept_rules = []
             for rule in concept:
                 if len(rule) > 1:
                     for subrule in rule:
-                        _rules.append(subrule)
+                        _completed_concept_rules.append(subrule)
                 else:
-                    _rules.append(subrule)
-            _new_concept_rules.append(_rules)
+                    if type(rule[0]) == list:
+                        _completed_concept_rules.append(rule[0])
+                    else:
+                        _completed_concept_rules.append(rule)
 
+            _rule_set.append(_completed_concept_rules)
 
+        for i in range(len(_rule_set)):
+            _to_remove = []
 
+            for j in range(len(_rule_set[i])):
+                for k in range(len(_rule_set[i])):
+                    if j != k:
+                        if set(_rule_set[i][j]).issubset(set(_rule_set[i][k])):
+                            _to_remove.append(k)
+            
+            _to_remove.sort()
+            _to_remove = _to_remove[::-1]
+            for j in _to_remove:
+                del _rule_set[i][j]
 
-        # for i in range(len(_new_concept_rules)):
+        _non_negated_rules = []
 
-        #     _to_remove = []
+        if(not self._dataset.consistent):
+            _non_negated_rules.append("! The input data set is inconsistent")
 
-        #     for j in range(len(_new_concept_rules[i])):
-        #         for k in range(len(_new_concept_rules[i])):
-        #             if j != k:
-        #                 # print "Comparing: " + str(_new_concept_rules[i][j]) + " With " + str(_new_concept_rules[i][k])
-        #                 if set(_new_concept_rules[i][j]).issubset(set(_new_concept_rules[i][k])):
-        #                     _to_remove.append(k)
+        for i in range(len(_rule_set)):
+            for j in range(len(_rule_set[i])):
+                _rule = ""
 
+                for k in range(len(_rule_set[i][j])):
+                    _rule = _rule + "(" + str(_rule_set[i][j][k][0]) + ", " + str(_rule_set[i][j][k][1]) + ")"
 
-        #     for j in range(len(_new_concept_rules[i])):
-        #         _attr = []
-                
-        #         for k in range(len(_new_concept_rules[i][j])):
-        #             _attr.append(_new_concept_rules[i][j][k][0])
-
-        #         if len(list(set(_attr))) == 1 and len(_new_concept_rules[i][j]) != 1:
-        #             _to_remove.append(k)
-
-        #     _to_remove.sort()
-        #     _to_remove = _to_remove[::-1]
-
-        #     for j in _to_remove:
-        #         del _new_concept_rules[i][j]
-
-        for concept in _new_concept_rules:
-            for rule in concept:
-                print rule
-            print        
-
-
-
-
-        return _new_rules
+                    if len(_rule_set[i][j][k]) > 1 and k != len(_rule_set[i][j])-1:
+                        _rule = _rule + " AND "
+                _rule = _rule + " -> (" + str(self._dataset.attributes[1][0]) + ", " + str(self._dataset.d_star[i][0][0]) + ")"
+                _non_negated_rules.append(_rule)
+ 
+        return _non_negated_rules
