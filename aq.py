@@ -169,20 +169,18 @@ class AQ:
             ## Updated the covered universe 
             _covered_universe.append(i)
 
-            ## DEBUG ONLY
-            # test = raw_input()
-
         ## Return _complex as the working partial star
         return _complex
 
     def covered_helper(self, new_complex):
         _removable = []
 
-        for j in range(0,len(new_complex)):
-            for k in range(0,len(new_complex)):
-                # print str(j) + " " + str(k)
-                if j != k and set(new_complex[j]).issubset(set(new_complex[k])):
-                    _removable.append(k)
+        for j in xrange(new_complex):
+            for k in xrange(len(new_complex)):
+                print str(j) + " " + str(k)
+                if j != k:
+                    if set(new_complex[j]).issubset(set(new_complex[k])):
+                        _removable.append(k)
 
         _removable = list(set(_removable))
         _removable.sort()

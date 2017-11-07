@@ -23,7 +23,7 @@ class Controller(object):
         # Grab a filename from the user
         # _filename = raw_input("Please enter a filename of a LERS file format: ")
 
-        _filename = "test_data.d"
+        _filename = "jgbdata2.d"
 
         # Start the reader
         _reader = LERS_Reader(_filename)
@@ -326,15 +326,22 @@ class Controller(object):
                 for k in range(len(_new_rules[i][j])):
                     _update = []
 
+                   
+                    
                     if _working_rules == []:
-                        for l in range(len(_new_rules[i][j][k])):
-                            _update.append(_new_rules[i][j][k][l])
+                        for l in range(len(_new_rules[i][j][k])):     
+                            _update.append([_new_rules[i][j][k][l]])
                     else:
+                        # print "Number of rules: " + str(len(_working_rules))
+                        # print "Number of rules to add: " + str(len(_new_rules[i][j][k]))
                         for l in range(len(_new_rules[i][j][k])):
                             for m in range(len(_working_rules)):
-                                _new = [_working_rules[m]]
-                                _new.append(_new_rules[i][j][k][l])
+                                _new = _working_rules[m]
+                                _new = _new + [_new_rules[i][j][k][l]]
                                 _update.append(_new)
+
+                                # print _new_rules[i][j][k]
+                                # test = raw_input()
 
                     _working_rules = _update
                 _concept_rules.append(_working_rules)
@@ -345,9 +352,7 @@ class Controller(object):
                 if len(rule) > 1:
 
                     ## Simplify new expanded rules
-
                     for i in range(len(rule)):
-                        print rule[i]
                         rule[i] = list(set(rule[i]))
 
                     _to_remove = []
@@ -358,7 +363,7 @@ class Controller(object):
                             if j != i:
                                 if set(rule[i]).issubset(set(rule[j])):
                                     _to_remove.append(j)
-
+                    _to_remove = list(set(_to_remove))
                     _to_remove.sort()
                     _to_remove = _to_remove[::-1]
                     for i in _to_remove:
@@ -375,6 +380,7 @@ class Controller(object):
 
                         if len(set(_attributes_repsrented)) == 1 and len(rule[j]) > 1:
                             _to_remove.append(j)
+                    _to_remove = list(set(_to_remove))
                     _to_remove.sort()
                     _to_remove = _to_remove[::-1]
                     for i in _to_remove:
@@ -404,9 +410,11 @@ class Controller(object):
                     if j != k:
                         if set(_rule_set[i][j]).issubset(set(_rule_set[i][k])):
                             _to_remove.append(k)
-            
+
+            _to_remove = list(set(_to_remove))
             _to_remove.sort()
             _to_remove = _to_remove[::-1]
+
             for j in _to_remove:
                 del _rule_set[i][j]
 
