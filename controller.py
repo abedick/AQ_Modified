@@ -21,9 +21,34 @@ class Controller(object):
 
     def run(self):
         # Grab a filename from the user
-        # _filename = raw_input("Please enter a filename of a LERS file format: ")
+        _file = False
 
-        _filename = "jgbdata2.d"
+        while not _file:
+            _filename = raw_input("Please enter a filename of a LERS file format: ")
+            try:
+                _file_test = open(_filename, 'r')
+                _file = True
+            except IOError:
+                print "Invalid filename given."
+                _file = False
+
+        _ms = False
+        _ms_value = None
+        
+        while not _ms:
+            _ms_value = raw_input("Please enter an integer value for MAXSTAR: ")
+            try:
+                _ms_value = int(_ms_value)
+                if _ms_value > 0:
+                    _ms_value = int(_ms_value)
+                    _ms = True
+                else:
+                    print "Invalid MAXSTAR value. Please enter an integer larger than 0."
+            except ValueError:
+                print "Invalid MAXSTAR value. Please enter an integer larger than 0."
+
+
+        # _filename = "test_data.d"
 
         # Start the reader
         _reader = LERS_Reader(_filename)
@@ -32,6 +57,8 @@ class Controller(object):
 
         # Grab the data from the file
         self._dataset = _reader.return_data()
+
+        self._dataset.maxstar = _ms_value
 
         ##
         ## Preprocessing
@@ -84,7 +111,7 @@ class Controller(object):
     def calculate_blocks(self):
         _case_decision = []
 
-        for i in range(0,len(self._dataset.universe)):
+        for i in xrange(len(self._dataset.universe)):
             if self._dataset.universe[i][1] not in _case_decision:
                 _case_decision.append(self._dataset.universe[i][1])
 
@@ -92,10 +119,10 @@ class Controller(object):
         for i in _case_decision:
             _block.append([[i[0]],[]])
 
-        for i in range(0,len(self._dataset.universe)):
+        for i in xrange(len(self._dataset.universe)):
             _placed = False
             while not _placed:
-                for k in range(0,len(_case_decision)):
+                for k in xrange(len(_case_decision)):
                     if self._dataset.universe[i][1] == _case_decision[k]:
                         _block[k][1].append(i)
                         _placed = True
@@ -108,12 +135,12 @@ class Controller(object):
     def check_consistency_fast(self):
         _case_decision = len(self._dataset.universe[0]) - 1
 
-        for i in range(0,len(self._dataset.universe)):
+        for i in xrange(len(self._dataset.universe)):
             _test_case = self._dataset.universe[i]
             _test_case_decision = _test_case[_case_decision]
             _test_case = _test_case[:-1]
 
-            for k in range(0,len(self._dataset.universe)):
+            for k in xrange(len(self._dataset.universe)):
                 _compare_case = self._dataset.universe[k]
                 _compare_case_decision = _compare_case[_case_decision]
                 _compare_case = _compare_case[:-1]
@@ -129,14 +156,14 @@ class Controller(object):
     def get_attribute_range(self):
         _attribute_sets = []
 
-        for i in range(0,len(self._dataset.attributes[0])):
+        for i in range(len(self._dataset.attributes[0])):
             _attribute_sets.append([])
 
-        for i in range(0,len(self._dataset.universe)):
-            for k in range(0,len(self._dataset.attributes[0])):
+        for i in xrange(len(self._dataset.universe)):
+            for k in xrange(len(self._dataset.attributes[0])):
                 _attribute_sets[k].append(self._dataset.universe[i][0][k])
 
-        for i in range(0,len(_attribute_sets)):
+        for i in xrange(len(_attribute_sets)):
             _attribute_sets[i] = list(set(_attribute_sets[i]))
 
         self._dataset.attribute_range = _attribute_sets
@@ -150,7 +177,7 @@ class Controller(object):
 
         # Check each attribute and if it is a type float, add the index number to the array.
         # This should have been stored as such from LERS_Reader at data read in time.
-        for i in range(0,len(self._dataset.universe[0][0])):
+        for i in xrange(len(self._dataset.universe[0][0])):
             try:
                 float(self._dataset.universe[0][0][i])
                 _number_attributes.append(i)
@@ -160,10 +187,10 @@ class Controller(object):
         _attribute_values = []
 
         # for each attribute that is numberic, append each unique case to _attribute_values[i]
-        for i in range(0,len(_number_attributes)):
+        for i in xrange(len(_number_attributes)):
             _attribute_values.append([_number_attributes[i],[]])
 
-            for k in range(0,len(self._dataset.universe)):
+            for k in xrange(len(self._dataset.universe)):
                 if self._dataset.universe[k][0][_number_attributes[i]] not in _attribute_values[i][1]:
                     _attribute_values[i][1].append(self._dataset.universe[k][0][_number_attributes[i]])
 
@@ -172,11 +199,11 @@ class Controller(object):
         _new_attributes = []
 
         # Create the attribute attributes that were numeric and compute their ranges and append them as block to _new_attributes
-        for i in range(0,len(_attribute_values)):
+        for i in xrange(len(_attribute_values)):
             _set = _attribute_values[i][1]
             _new_attributes.append([])
 
-            for k in range(1,len(_set)):
+            for k in xrange(1,len(_set)):
                 _new_value = (_set[k-1]+_set[k])/2
                 _base_string = self._dataset.attributes[0][_attribute_values[i][0]]
                 _new_name = str(_base_string) + "_" + str(_new_value)
@@ -191,11 +218,11 @@ class Controller(object):
         
         # Create a multidimensional list, one dim for each of the new attribute blocks
         # and construct the new values on a universe case by case order
-        for i in range(0,len(self._dataset.universe)): 
+        for i in xrange(len(self._dataset.universe)): 
             _updated_uni.append([])
-            for k in range(0,len(_new_attributes)):
+            for k in xrange(len(_new_attributes)):
                 _new_attribute_block = []
-                for l in range(0,len(_new_attributes[k])):
+                for l in xrange(len(_new_attributes[k])):
                     _test_value =  self._dataset.universe[i][0][_number_attributes[k]]
                     _lower = _new_attributes[k][l][1][0]
                     _upper = _new_attributes[k][l][1][1]
@@ -215,7 +242,7 @@ class Controller(object):
         _number_attributes = _number_attributes[::-1]
         _names = []
 
-        for i in range(0,len(_new_attributes)):
+        for i in xrange(len(_new_attributes)):
             _name_block = []
 
             for j in _new_attributes[i]:
@@ -244,7 +271,7 @@ class Controller(object):
             _count = _count+1
 
         # Update the rows of the universe with each new case
-        for i in range(0,len(self._dataset.universe)):
+        for i in xrange(len(self._dataset.universe)):
             _count = 0
             for k in _number_attributes:
                 # add the new symbolic block
@@ -269,11 +296,11 @@ class Controller(object):
         if(not self._dataset.consistent):
             _rules.append("! The input data set is inconsistent")
 
-        for i in range(0,len(_results)):
-            for j in range(0,len(_results[i][1])):
+        for i in xrange(len(_results)):
+            for j in xrange(len(_results[i][1])):
                 _rule = ""
 
-                for k in range(0,len(_results[i][1][j])):
+                for k in xrange(len(_results[i][1][j])):
                     _rule = _rule + "(" + str(_results[i][1][j][k][0]) + ", " + str(_results[i][1][j][k][1]) + ")"
                     
                     if ((len(_results[i][1][j][k]) > 1) and (k != len(_results[i][1][j])-1)):
@@ -288,25 +315,25 @@ class Controller(object):
         _new_rules = []
 
         ## For each concepts' rule set
-        for i in range(0,len(_results)):
+        for i in xrange(len(_results)):
             _new_concept_rules = []
 
             ## For each rule
-            for j in range(0,len(_results[i][1])):
+            for j in xrange(len(_results[i][1])):
                 _current_working_rule = _results[i][1][j]
                 _new_rule = []
 
                 ## For each conjunction/selector
-                for k in range(0,len(_current_working_rule)):
+                for k in xrange(len(_current_working_rule)):
                     _working_attribute = _current_working_rule[k][0]
                     _working_attribute_value = _current_working_rule[k][1][4::]
                    
-                    for l in range(0,len(self._dataset.attributes[0])):
+                    for l in xrange(len(self._dataset.attributes[0])):
                         if _working_attribute == self._dataset.attributes[0][l]:
                             _new_attribute_values = list(set(self._dataset.attribute_range[l]) - set([_working_attribute_value]))
                             _new_av_pairs = []
 
-                            for m in range(0,len(_new_attribute_values)):
+                            for m in xrange(len(_new_attribute_values)):
                                 _new_av_pairs.append((_working_attribute,_new_attribute_values[m]))
 
                                 if _new_av_pairs not in _new_rule:
@@ -325,9 +352,7 @@ class Controller(object):
 
                 for k in range(len(_new_rules[i][j])):
                     _update = []
-
-                   
-                    
+ 
                     if _working_rules == []:
                         for l in range(len(_new_rules[i][j][k])):     
                             _update.append([_new_rules[i][j][k][l]])
@@ -402,11 +427,11 @@ class Controller(object):
 
             _rule_set.append(_completed_concept_rules)
 
-        for i in range(len(_rule_set)):
+        for i in xrange(len(_rule_set)):
             _to_remove = []
 
-            for j in range(len(_rule_set[i])):
-                for k in range(len(_rule_set[i])):
+            for j in xrange(len(_rule_set[i])):
+                for k in xrange(len(_rule_set[i])):
                     if j != k:
                         if set(_rule_set[i][j]).issubset(set(_rule_set[i][k])):
                             _to_remove.append(k)
@@ -423,11 +448,11 @@ class Controller(object):
         if(not self._dataset.consistent):
             _non_negated_rules.append("! The input data set is inconsistent")
 
-        for i in range(len(_rule_set)):
-            for j in range(len(_rule_set[i])):
+        for i in xrange(len(_rule_set)):
+            for j in xrange(len(_rule_set[i])):
                 _rule = ""
 
-                for k in range(len(_rule_set[i][j])):
+                for k in xrange(len(_rule_set[i][j])):
                     _rule = _rule + "(" + str(_rule_set[i][j][k][0]) + ", " + str(_rule_set[i][j][k][1]) + ")"
 
                     if len(_rule_set[i][j][k]) > 1 and k != len(_rule_set[i][j])-1:

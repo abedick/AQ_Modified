@@ -13,7 +13,7 @@ class AQ:
 
     def __init__(self):
         self._dataset = None
-        self._maxstar = 1
+        self._maxstar = None
         self._completed_concepts = []
 
         self._pos = None
@@ -21,6 +21,7 @@ class AQ:
 
     def run(self, dataset):
         self._dataset = dataset
+        self._maxstar = dataset.maxstar
 
         _result = []
 
@@ -55,22 +56,17 @@ class AQ:
             _partial = self.partial_star(b,neg)
 
             ## Check if the new partial is already covered by the cover
-            _covered = []
+            _covered = False
 
-            for i in range(0,len(_partial)):
-                for k in range(0,len(_cover)):
+            for i in xrange(len(_partial)):
+                for k in xrange(len(_cover)):
                     if _cover[k] == _partial[i]:
-                        _covered.append(i)
+                        _covered = True
+                        break
 
-            if _covered != []:
-                _covered = sorted(list(set(_covered)))
-                _covered = _covered[::-1]
-
-                for i in _covered:
-                    del _partial[i]
-
-            ## Add the new partial to the cover
-            _cover += _partial
+            if not _covered:
+                ## Add the new partial to the cover
+                _cover += _partial
 
         return _cover
 
@@ -99,7 +95,7 @@ class AQ:
             ## - This tuple uses negate and concatenates "NOT" to the second position of the tuple
             _selectors = []
 
-            for j in range(0,len(_attributes[0])):
+            for j in  xrange(len(_attributes[0])):
                 _universe_attribute = self._dataset.universe[i][0][j]
                 _seed_attribute = self._dataset.universe[seed][0][j]
 
@@ -175,9 +171,8 @@ class AQ:
     def covered_helper(self, new_complex):
         _removable = []
 
-        for j in xrange(new_complex):
+        for j in xrange(len(new_complex)):
             for k in xrange(len(new_complex)):
-                print str(j) + " " + str(k)
                 if j != k:
                     if set(new_complex[j]).issubset(set(new_complex[k])):
                         _removable.append(k)
@@ -191,7 +186,7 @@ class AQ:
                 del new_complex[j]
 
         return new_complex
-
+        
     def maxstar_helper(self, new_complex):
         while len(new_complex) > self._maxstar:
             _new_complex_mod = []
@@ -226,12 +221,12 @@ class AQ:
                         _list.append(k)
                 _cover_list.append(_list)
 
-            for j in range(0,len(_cover_list)):
+            for j in xrange(len(_cover_list)):
                 _cover_list[j] = len(_cover_list[j])
             _index_remove = -1
             _count = 0
 
-            for j in range(0,len(_cover_list)):
+            for j in xrange(len(_cover_list)):
                 if _cover_list[j] > _count:
                     _count = _cover_list[j]
                     _index_remove = j

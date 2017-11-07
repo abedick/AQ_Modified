@@ -21,6 +21,15 @@ class Dataset(object):
         self._d_star = None
         self._a_star = None
         self._consistent = True
+        self._maxstar = None
+
+    @property
+    def maxstar(self):
+        return self._maxstar
+
+    @maxstar.setter
+    def maxstar(self, value):
+        self._maxstar = value
 
     @property
     def attributes(self):
@@ -88,3 +97,4 @@ class Dataset(object):
     @attribute_range.setter
     def attribute_range(self, value):
         self._attribute_range = value
+        
