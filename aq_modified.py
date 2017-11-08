@@ -13,6 +13,7 @@ class AQMod:
 
     def __init__(self):
         self._dataset = None
+        self._covered = []
 
     ##
     ## In charge of controlling AQ
@@ -28,7 +29,7 @@ class AQMod:
         _result = []
 
         # for i in xrange(len(self._dataset.d_star)):
-        for i in xrange(1):
+        for i in xrange(len(self._dataset.d_star)):
             _positive = list(set(self._dataset.d_star[i][1]))
             _negative = list(set(range(len(self._dataset.universe))).difference(set(self._dataset.d_star[i][1])))
 
@@ -40,21 +41,25 @@ class AQMod:
         return _result
 
     def aq(self, positive, negative):
-
         _star = []
 
         for seed in positive:
-            print "Seed: " + str(seed)
-            ## Check to see if seed is already covered
-
-            ## If not covered, compute partial star
+            ## compute partial star
             _partial_star = self.partial_star(seed,negative)
+            print "Seed: " + str(seed)
 
-            _star.append(_partial_star)
+            _covered = False
+            for i in xrange(len(_partial_star)):
+                for k in xrange(len(_star)):
+                    if _star[k] == _partial_star[i]:
+                        _covered = True
+                        print "covered"
+                        break
+                if _covered:
+                    break
 
-
-        for i in _star:
-            print i
+            if not _covered:
+                _star += _partial_star
 
         return _star
 
@@ -86,7 +91,6 @@ class AQMod:
             ## a conjunction
             ##
             if len(_covered_universe) == 0:
-                # print "Original Selectors: " + str(_selectors)
                 for selector in _selectors:
                     _new_partial.append([selector])
                 _partial_star = _new_partial
@@ -107,12 +111,14 @@ class AQMod:
                     ##
                     _covered = False
                     for conjunction in _partial_star:
-                        if set(_selectors).issuperset(set(conjunction)):
+                        if set(_selectors) == set(conjunction):
+                            continue
+                        elif set(_selectors).issuperset(set(conjunction)):
                             _covered = True
                             break
                     
                     if not _covered:
-                        # print "New Selectors: " + str(_selectors)
+
                         for i in _partial_star:
                             for j in _selectors:
 
@@ -121,7 +127,6 @@ class AQMod:
                                     _new_conjunction.append(complex)
                                 _new_conjunction.append(j)
 
-                                # print _new_conjunction
                                 _new_partial.append(list(set(_new_conjunction)))
                         _partial_star = _new_partial
 
@@ -176,7 +181,7 @@ class AQMod:
                             if _flag:
                                 _list.append(k)
                         _cover_list.append(_list)
-
+                
                     for j in xrange(len(_cover_list)):
                         _cover_list[j] = len(_cover_list[j])
                     _index_remove = -1

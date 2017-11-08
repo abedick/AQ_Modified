@@ -49,7 +49,7 @@ class Controller(object):
         #         print "Invalid MAXSTAR value. Please enter an integer larger than 0."
 
 
-        _filename = "test_data.d"
+        _filename = "datasets/test_data7.d"
 
 
         # Start the reader
@@ -60,7 +60,7 @@ class Controller(object):
         # Grab the data from the file
         self._dataset = _reader.return_data()
 
-        self._dataset.maxstar = 1
+        self._dataset.maxstar = 100
 
         ##
         ## Preprocessing
@@ -74,22 +74,14 @@ class Controller(object):
         self.check_consistency_fast()
         self.get_attribute_range()
 
-        # self.print_dataset(self._dataset)
-
         self._results = self._aq.run(self._dataset)
 
-        # _non_negated = self.results_helper(self._results)
-        # # _non_negated = []
-        # _negated = self.negated_results_helper(self._results)
+        _non_negated = self.results_helper(self._results)
+        _negated = self.negated_results_helper(self._results)
 
-        # _processed_results = [_non_negated,_negated]
+        _processed_results = [_non_negated,_negated]
 
-        # self._printer.printer(_processed_results)
-        
-        #  = self.results_helper(self._results)
-
-        # self._printer.printer(self._results,self._dataset.attributes[1][0],self._dataset.attributes[0],self._dataset.attribute_range)
-
+        self._printer.printer(_processed_results)
 
     def print_dataset(self, _dataset):
         print "\n\n\nDataset Information"
@@ -308,7 +300,7 @@ class Controller(object):
                     if ((len(_results[i][1][j][k]) > 1) and (k != len(_results[i][1][j])-1)):
                            _rule = _rule + " AND "
 
-                _rule = _rule + " -> (" + str(self._dataset.attributes[1][0]) + ", " + str(_results[i][0][0][0]) + ")"
+                _rule = _rule + " -> (" + str(self._dataset.attributes[1][0]) + ", " + str(_results[i][0][0]) + ")"
                 _rules.append(_rule)
         return _rules
                 
