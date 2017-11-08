@@ -7,6 +7,7 @@
 from dataset import Dataset
 from lers_reader import LERS_Reader
 from aq import AQ
+from aq_modified import AQMod
 from ruleset_printer import Printer
 
 from itertools import izip_longest
@@ -15,7 +16,7 @@ class Controller(object):
 
     def __init__(self):
         self._dataset = Dataset()
-        self._aq = AQ()
+        self._aq = AQMod()
         self._results = None
         self._printer = Printer()
 
@@ -23,32 +24,33 @@ class Controller(object):
         # Grab a filename from the user
         _file = False
 
-        while not _file:
-            _filename = raw_input("Please enter a filename of a LERS file format: ")
-            try:
-                _file_test = open(_filename, 'r')
-                _file = True
-            except IOError:
-                print "Invalid filename given."
-                _file = False
+        # while not _file:
+        #     _filename = raw_input("Please enter a filename of a LERS file format: ")
+        #     try:
+        #         _file_test = open(_filename, 'r')
+        #         _file = True
+        #     except IOError:
+        #         print "Invalid filename given."
+        #         _file = False
 
-        _ms = False
-        _ms_value = None
+        # _ms = False
+        # _ms_value = None
         
-        while not _ms:
-            _ms_value = raw_input("Please enter an integer value for MAXSTAR: ")
-            try:
-                _ms_value = int(_ms_value)
-                if _ms_value > 0:
-                    _ms_value = int(_ms_value)
-                    _ms = True
-                else:
-                    print "Invalid MAXSTAR value. Please enter an integer larger than 0."
-            except ValueError:
-                print "Invalid MAXSTAR value. Please enter an integer larger than 0."
+        # while not _ms:
+        #     _ms_value = raw_input("Please enter an integer value for MAXSTAR: ")
+        #     try:
+        #         _ms_value = int(_ms_value)
+        #         if _ms_value > 0:
+        #             _ms_value = int(_ms_value)
+        #             _ms = True
+        #         else:
+        #             print "Invalid MAXSTAR value. Please enter an integer larger than 0."
+        #     except ValueError:
+        #         print "Invalid MAXSTAR value. Please enter an integer larger than 0."
 
 
-        # _filename = "test_data.d"
+        _filename = "test_data.d"
+
 
         # Start the reader
         _reader = LERS_Reader(_filename)
@@ -58,7 +60,7 @@ class Controller(object):
         # Grab the data from the file
         self._dataset = _reader.return_data()
 
-        self._dataset.maxstar = _ms_value
+        self._dataset.maxstar = 100
 
         ##
         ## Preprocessing
@@ -76,13 +78,13 @@ class Controller(object):
 
         self._results = self._aq.run(self._dataset)
 
-        _non_negated = self.results_helper(self._results)
-        # _non_negated = []
-        _negated = self.negated_results_helper(self._results)
+        # _non_negated = self.results_helper(self._results)
+        # # _non_negated = []
+        # _negated = self.negated_results_helper(self._results)
 
-        _processed_results = [_non_negated,_negated]
+        # _processed_results = [_non_negated,_negated]
 
-        self._printer.printer(_processed_results)
+        # self._printer.printer(_processed_results)
         
         #  = self.results_helper(self._results)
 
