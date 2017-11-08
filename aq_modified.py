@@ -19,14 +19,12 @@ class AQMod:
     ##
     def run(self,dataset):
         self._dataset = dataset
-
         return self.start()
 
     ##
     ## calculates the concepts and runs the AQ 
     ##
     def start(self):
-
         _result = []
 
         # for i in xrange(len(self._dataset.d_star)):
@@ -44,12 +42,19 @@ class AQMod:
     def aq(self, positive, negative):
 
         _star = []
-        _positive = [positive[0]]
-        for seed in _positive:
+
+        for seed in positive:
+            print "Seed: " + str(seed)
             ## Check to see if seed is already covered
 
             ## If not covered, compute partial star
             _partial_star = self.partial_star(seed,negative)
+
+            _star.append(_partial_star)
+
+
+        for i in _star:
+            print i
 
         return _star
 
@@ -60,7 +65,8 @@ class AQMod:
         _attributes = self._dataset.attributes
 
         for case in negative:
-            print "G ( " + str(seed) + " | " + str(case) + " )"
+            # print "G ( " + str(seed) + " | " + str(case) + " )"
+            # print "Partial Star: "+ str(_partial_star)
             _new_partial = []
 
             ##
@@ -90,7 +96,6 @@ class AQMod:
                 ## First conjunction
                 ##
                 if len(_covered_universe) == 1:
-                    # print "New Selectors: " + str(_selectors)
                     for i in _partial_star:
                         for j in _selectors:
                             _conjunction = (i[0],j)
@@ -102,15 +107,12 @@ class AQMod:
                     ##
                     _covered = False
                     for conjunction in _partial_star:
-                        # print "Set of Selectors: " + str(_selector) + "\tConjunction: " + str(conjunction)
                         if set(_selectors).issuperset(set(conjunction)):
                             _covered = True
-                            # print "covered"
                             break
                     
                     if not _covered:
                         # print "New Selectors: " + str(_selectors)
-                        # print "Current Partial Star: " + str(_partial_star)
                         for i in _partial_star:
                             for j in _selectors:
 
@@ -124,7 +126,7 @@ class AQMod:
                         _partial_star = _new_partial
 
                 ##
-                ## Simplify first conjunction
+                ## Remove complexes that are already covered
                 ##
                 _removable = []
                 for i in xrange(len(_new_partial)):
@@ -135,17 +137,56 @@ class AQMod:
 
                 _removable.sort()
                 _removable = _removable[::-1]
-                
+            
                 for j in _removable:
                     if len(_new_partial) > 1:
                         del _new_partial[j]
 
-            #     print "New Partial Star: "+ str(_new_partial)
+                ##
+                ## Remove complexes until number complex = MAXSTAR
+                ##
+                while len(_new_partial) > self._dataset.maxstar:
+                    _modified_partial = []
 
-            # print
-            
+                    for i in _new_partial:
+                        _mod = []
+                        for j in i:
+                            _mod.append((j[0], j[1][4::]))
+                        _modified_partial.append(_mod)
+                    _pos = list(set(range(len(self._dataset.universe))) - set(negative))
 
+                    _test_universe = []
+                    for j in _pos:
+                        _comparison = []
+                        for l in range(0,len(self._dataset.universe[j][0])):
+                            _case_update = (self._dataset.attributes[0][l],self._dataset.universe[j][0][l])
+                            _comparison.append(_case_update)
+                        _test_universe.append(_comparison)
+                    
+                    _cover_list = []
+                    
+                    for j in _modified_partial:
+                        _list = []
+                        for k in xrange(len(_test_universe)):
+                            _flag = True
+                            for l in j:
+                                for m in xrange(len(_test_universe[k])):
+                                    if l == _test_universe[k][m]:
+                                        _flag = False
+                            if _flag:
+                                _list.append(k)
+                        _cover_list.append(_list)
+
+                    for j in xrange(len(_cover_list)):
+                        _cover_list[j] = len(_cover_list[j])
+                    _index_remove = -1
+                    _count = 0
+
+                    for j in xrange(len(_cover_list)):
+                        if _cover_list[j] > _count:
+                            _count = _cover_list[j]
+                            _index_remove = j
+                    del _new_partial[_index_remove]
             _covered_universe.append(case)
                 
-        print _partial_star
         return _partial_star

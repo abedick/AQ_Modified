@@ -60,7 +60,7 @@ class Controller(object):
         # Grab the data from the file
         self._dataset = _reader.return_data()
 
-        self._dataset.maxstar = 100
+        self._dataset.maxstar = 1
 
         ##
         ## Preprocessing
