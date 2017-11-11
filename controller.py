@@ -24,47 +24,39 @@ class Controller(object):
         # Grab a filename from the user
         _file = False
 
-        # while not _file:
-        #     _filename = raw_input("Please enter a filename of a LERS file format: ")
-        #     try:
-        #         _file_test = open(_filename, 'r')
-        #         _file = True
-        #     except IOError:
-        #         print "Invalid filename given."
-        #         _file = False
+        while not _file:
+            _filename = raw_input("Please enter a filename of a LERS file format: ")
+            try:
+                _file_test = open(_filename, 'r')
+                _file = True
+            except IOError:
+                print "Invalid filename given."
+                _file = False
 
-        # _ms = False
-        # _ms_value = None
+        _ms = False
+        _ms_value = None
         
-        # while not _ms:
-        #     _ms_value = raw_input("Please enter an integer value for MAXSTAR: ")
-        #     try:
-        #         _ms_value = int(_ms_value)
-        #         if _ms_value > 0:
-        #             _ms_value = int(_ms_value)
-        #             _ms = True
-        #         else:
-        #             print "Invalid MAXSTAR value. Please enter an integer larger than 0."
-        #     except ValueError:
-        #         print "Invalid MAXSTAR value. Please enter an integer larger than 0."
+        while not _ms:
+            _ms_value = raw_input("Please enter an integer value for MAXSTAR: ")
+            try:
+                _ms_value = int(_ms_value)
+                if _ms_value > 0:
+                    _ms_value = int(_ms_value)
+                    _ms = True
+                else:
+                    print "Invalid MAXSTAR value. Please enter an integer larger than 0."
+            except ValueError:
+                print "Invalid MAXSTAR value. Please enter an integer larger than 0."
 
 
-        _filename = "datasets/test_data2.d"
 
-
-        # Start the reader
+        # Start the reader and read in the file
         _reader = LERS_Reader(_filename)
-
         _reader.read_file()
 
         # Grab the data from the file
         self._dataset = _reader.return_data()
-
-        self._dataset.maxstar = 50
-
-        ##
-        ## Preprocessing
-        ##
+        self._dataset.maxstar = _ms_value
 
         # Check if the data is symbolic or numeric
         if not(self._dataset.symbolic):
@@ -74,35 +66,19 @@ class Controller(object):
         self.check_consistency_fast()
         self.get_attribute_range()
 
-        print "Number of attributes: " + str(len(self._dataset.attributes[0]))
-
+        ## Send the dataset to AQ
         self._results = self._aq.run(self._dataset)
 
+        ## Process the results
         _non_negated = self.results_helper(self._results)
         _negated = self.negated_results_helper(self._results)
 
+        ## Print the results to file
         _processed_results = [_non_negated,_negated]
-
         self._printer.printer(_processed_results)
 
-    def print_dataset(self, _dataset):
-        print "\n\n\nDataset Information"
-        print "---------------------------------------------------------"
-        print "Data set is only symbolic: " + str(_dataset.symbolic)
-        print "Data set is consistent: " + str(_dataset.consistent)
-        print "{d}*: " + str(_dataset.d_star)
-        print "Number of attributes: " + str(len(_dataset.attributes[0]))
-        print "All Attributers: " + str(_dataset.attributes[0])
-        print "Attribute Ranges: " + str(_dataset.attribute_range)
-        print "Decision Name: " + str(_dataset.attributes[1][0])
-        print "Number of cases in universe: " + str(len(_dataset.universe))
-        print "--------------------------------------------------------"
-        print str(_dataset.attributes)
-        for i in range(0,len(_dataset.universe)):
-            print str(_dataset.universe[i])
-
     ###
-    ### Calculates the concept blacks {d}*
+    ### Calculates the concept blocks {d}*
     ###
     def calculate_blocks(self):
         _case_decision = []
@@ -353,16 +329,11 @@ class Controller(object):
                         for l in range(len(_new_rules[i][j][k])):     
                             _update.append([_new_rules[i][j][k][l]])
                     else:
-                        # print "Number of rules: " + str(len(_working_rules))
-                        # print "Number of rules to add: " + str(len(_new_rules[i][j][k]))
                         for l in range(len(_new_rules[i][j][k])):
                             for m in range(len(_working_rules)):
                                 _new = _working_rules[m]
                                 _new = _new + [_new_rules[i][j][k][l]]
                                 _update.append(_new)
-
-                                # print _new_rules[i][j][k]
-                                # test = raw_input()
 
                     _working_rules = _update
                 _concept_rules.append(_working_rules)

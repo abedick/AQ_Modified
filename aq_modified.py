@@ -33,11 +33,6 @@ class AQMod:
             _positive = list(set(self._dataset.d_star[i][1]))
             _negative = list(set(range(len(self._dataset.universe))).difference(set(self._dataset.d_star[i][1])))
 
-            # print "C: " + str(_positive)
-            # print "F: " + str(_negative)
-            print
-            print "Concept: " + str(self._dataset.d_star[i][0][0])
-
             _result.append([self._dataset.d_star[i][0],self.aq(_positive,_negative)])
 
         return _result
@@ -47,7 +42,6 @@ class AQMod:
 
         for seed in positive:
             ## compute partial star
-            print "   Seed: " + str(seed)
             _partial_star = self.partial_star(seed,negative)
 
             _covered = False
@@ -55,7 +49,6 @@ class AQMod:
                 for k in xrange(len(_star)):
                     if _star[k] == _partial_star[i]:
                         _covered = True
-                        print "     covered"
                         break
                 if _covered:
                     break
@@ -72,8 +65,6 @@ class AQMod:
         _attributes = self._dataset.attributes
 
         for case in negative:
-            # print "      G ( " + str(seed) + " | " + str(case) + " )"
-            # print "Partial Star: "+ str(_partial_star)
             _new_partial = []
 
             ##
