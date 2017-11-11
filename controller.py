@@ -49,7 +49,7 @@ class Controller(object):
         #         print "Invalid MAXSTAR value. Please enter an integer larger than 0."
 
 
-        _filename = "datasets/jgbdata5.d"
+        _filename = "datasets/test_data2.d"
 
 
         # Start the reader
@@ -60,7 +60,7 @@ class Controller(object):
         # Grab the data from the file
         self._dataset = _reader.return_data()
 
-        self._dataset.maxstar = 2
+        self._dataset.maxstar = 50
 
         ##
         ## Preprocessing
@@ -78,10 +78,10 @@ class Controller(object):
 
         self._results = self._aq.run(self._dataset)
 
-        # _non_negated = self.results_helper(self._results)
+        _non_negated = self.results_helper(self._results)
         _negated = self.negated_results_helper(self._results)
 
-        _processed_results = [[0],_negated]
+        _processed_results = [_non_negated,_negated]
 
         self._printer.printer(_processed_results)
 
