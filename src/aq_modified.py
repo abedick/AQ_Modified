@@ -7,7 +7,7 @@
 #         690 semester project requirements
 
 
-from dataset import Dataset
+from src.dataset import Dataset
 
 class AQMod:
 

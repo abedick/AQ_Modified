@@ -4,11 +4,10 @@
 # @desc: Main controller for EECS 690 Programming Project
 
 
-from dataset import Dataset
-from lers_reader import LERS_Reader
-from aq import AQ
-from aq_modified import AQMod
-from ruleset_printer import Printer
+from src.dataset import Dataset
+from src.lers_reader import LERS_Reader
+from src.aq_modified import AQMod
+from src.ruleset_printer import Printer
 
 from itertools import izip_longest
 

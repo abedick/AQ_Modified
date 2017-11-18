@@ -6,7 +6,7 @@
 
 import sys
 
-from controller import Controller
+from src.controller import Controller
 
 def main():    
     _controller = Controller()
