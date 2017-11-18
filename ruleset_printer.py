@@ -7,17 +7,19 @@ class Printer(object):
 
     def __init__(self):
         self._rules = None
+        self._name = ""
 
-    def printer(self,rules):
+    def printer(self,rules,name):
+        self._name = name
         self.rules(rules[0])
         self.negation(rules[1])
 
     def negation(self,rules):
-        with open("my-data.with.negation.rul",'w') as output:
+        with open(self._name + ".with.negation.rul",'w') as output:
             for i in rules:
                 output.write(str(i) + "\n")
 
     def rules(self,rules):
-        with open("my-data.without.negation.rul",'w') as output:
+        with open(self._name + ".without.negation.rul",'w') as output:
             for i in rules:
                 output.write(str(i) + "\n")

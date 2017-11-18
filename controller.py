@@ -49,7 +49,6 @@ class Controller(object):
                 print "Invalid MAXSTAR value. Please enter an integer larger than 0."
 
 
-
         # Start the reader and read in the file
         _reader = LERS_Reader(_filename)
         _reader.read_file()
@@ -57,6 +56,7 @@ class Controller(object):
         # Grab the data from the file
         self._dataset = _reader.return_data()
         self._dataset.maxstar = _ms_value
+        self._dataset.name = _filename
 
         # Check if the data is symbolic or numeric
         if not(self._dataset.symbolic):
@@ -75,7 +75,7 @@ class Controller(object):
 
         ## Print the results to file
         _processed_results = [_non_negated,_negated]
-        self._printer.printer(_processed_results)
+        self._printer.printer(_processed_results,self._dataset.name)
 
     ###
     ### Calculates the concept blocks {d}*
@@ -333,7 +333,9 @@ class Controller(object):
                             for m in range(len(_working_rules)):
                                 _new = _working_rules[m]
                                 _new = _new + [_new_rules[i][j][k][l]]
-                                _update.append(_new)
+                                _new = list(set(_new))
+                                if _new not in _update:
+                                    _update.append(_new)
 
                     _working_rules = _update
                 _concept_rules.append(_working_rules)

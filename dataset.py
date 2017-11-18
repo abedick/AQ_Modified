@@ -23,6 +23,16 @@ class Dataset(object):
         self._consistent = True
         self._maxstar = None
 
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value.split(".")[0]
+        self._name = self._name.replace("/","-")
+
     @property
     def maxstar(self):
         return self._maxstar
