@@ -28,10 +28,17 @@ class AQMod:
     def start(self):
         _result = []
 
+        first_con = [0]
+
+        # len(self._dataset.d_star)
+
         # for i in xrange(len(self._dataset.d_star)):
-        for i in xrange(len(self._dataset.d_star)):
+        for i in xrange(len(first_con)):
             _positive = list(set(self._dataset.d_star[i][1]))
             _negative = list(set(range(len(self._dataset.universe))).difference(set(self._dataset.d_star[i][1])))
+
+            print "C = " + str(_positive)
+            print "F = " + str(_negative)
 
             _result.append([self._dataset.d_star[i][0],self.aq(_positive,_negative)])
 
@@ -40,7 +47,12 @@ class AQMod:
     def aq(self, positive, negative):
         _star = []
 
-        for seed in positive:
+        pos1 = [positive[0]]
+
+        for seed in pos1:
+            print "Seed: " + str(seed)
+
+
             ## compute partial star
             _partial_star = self.partial_star(seed,negative)
 
@@ -60,13 +72,14 @@ class AQMod:
 
     def partial_star(self,seed,negative):
         _partial_star = []
+        _dct_partial_star = []
         _covered_universe = []
         _seed_value = self._dataset.universe[seed]
         _attributes = self._dataset.attributes
 
         for case in negative:
             _new_partial = []
-
+            _dct_new_partial = []
             ##
             ## Gather new selectors by comparing seed case against negative case
             ##
@@ -80,6 +93,21 @@ class AQMod:
                     _selectors.append(_selector)
 
             ##
+            ## Possible Dictionary Implementation
+            ##
+            _selector_dictionary = dict()
+
+            for i in xrange(len(_attributes)):
+                _universe_attribute = self._dataset.universe[case][0][i]
+                _seed_attribute = self._dataset.universe[seed][0][i]
+
+                if _universe_attribute != _seed_attribute:
+                    _selector_dictionary.update({self._dataset.attributes[0][i]:"NOT " + str(self._dataset.universe[case][0][i])})
+
+            print "New Selectors: " + str(_selectors)
+            print "Dictionary: " + str(_selector_dictionary)
+
+            ##
             ## If these are the first selectors, they will each be the beginning of 
             ## a conjunction
             ##
@@ -87,6 +115,9 @@ class AQMod:
                 for selector in _selectors:
                     _new_partial.append([selector])
                 _partial_star = _new_partial
+
+                _dct_new_partial.append( _selector_dictionary )
+                _dct_partial_star.append(_dct_new_partial)
 
             else:
                 ##
@@ -97,7 +128,24 @@ class AQMod:
                         for j in _selectors:
                             _conjunction = (i[0],j)
                             _new_partial.append(list(set(_conjunction)))
-                    _partial_star = _new_partial
+
+                    _partial_star =_new_partial
+                    
+                    _updated_dict = dict()
+                    print "hjere"
+                    # print
+                    # print "Current Selectors: " + str(_selector_dictionary)                
+                    # print "DCT: " + str(_dct_partial_star)
+                    # print "Comp to: " + str(_partial_star)
+                    # print
+                    # print
+
+                    for i in [_selector_dictionary]:
+                        for j in _dct_partial_star:
+                            print "conj: " + str([i,j])
+
+
+
                 else:
                     ##
                     ## Make sure that case isn't already covered

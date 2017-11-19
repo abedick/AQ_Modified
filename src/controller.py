@@ -20,33 +20,36 @@ class Controller(object):
         self._printer = Printer()
 
     def run(self):
-        # Grab a filename from the user
-        _file = False
+        # # Grab a filename from the user
+        # _file = False
 
-        while not _file:
-            _filename = raw_input("Please enter a filename of a LERS file format: ")
-            try:
-                _file_test = open(_filename, 'r')
-                _file = True
-            except IOError:
-                print "Invalid filename given."
-                _file = False
+        # while not _file:
+        #     _filename = raw_input("Please enter a filename of a LERS file format: ")
+        #     try:
+        #         _file_test = open(_filename, 'r')
+        #         _file = True
+        #     except IOError:
+        #         print "Invalid filename given."
+        #         _file = False
 
-        _ms = False
-        _ms_value = None
+        # _ms = False
+        # _ms_value = None
         
-        while not _ms:
-            _ms_value = raw_input("Please enter an integer value for MAXSTAR: ")
-            try:
-                _ms_value = int(_ms_value)
-                if _ms_value > 0:
-                    _ms_value = int(_ms_value)
-                    _ms = True
-                else:
-                    print "Invalid MAXSTAR value. Please enter an integer larger than 0."
-            except ValueError:
-                print "Invalid MAXSTAR value. Please enter an integer larger than 0."
+        # while not _ms:
+        #     _ms_value = raw_input("Please enter an integer value for MAXSTAR: ")
+        #     try:
+        #         _ms_value = int(_ms_value)
+        #         if _ms_value > 0:
+        #             _ms_value = int(_ms_value)
+        #             _ms = True
+        #         else:
+        #             print "Invalid MAXSTAR value. Please enter an integer larger than 0."
+        #     except ValueError:
+        #         print "Invalid MAXSTAR value. Please enter an integer larger than 0."
 
+
+        _filename = "datasets/test_data7.d"
+        _ms_value = 100
 
         # Start the reader and read in the file
         _reader = LERS_Reader(_filename)
@@ -59,20 +62,22 @@ class Controller(object):
 
         # Check if the data is symbolic or numeric
         if not(self._dataset.symbolic):
-            self.compute_numeric()
+            self.compute_numeric()        
 
         self.calculate_blocks()
         self.check_consistency_fast()
         self.get_attribute_range()
 
-        ## Send the dataset to AQ
+        print self._dataset.attr_dict
+
+        # ## Send the dataset to AQ
         self._results = self._aq.run(self._dataset)
 
-        ## Process the results
+        # ## Process the results
         _non_negated = self.results_helper(self._results)
         _negated = self.negated_results_helper(self._results)
 
-        ## Print the results to file
+        # ## Print the results to file
         _processed_results = [_non_negated,_negated]
         self._printer.printer(_processed_results,self._dataset.name)
 
@@ -138,6 +143,24 @@ class Controller(object):
             _attribute_sets[i] = list(set(_attribute_sets[i]))
 
         self._dataset.attribute_range = _attribute_sets
+
+
+        attributes = dict()
+
+        _attribute_range = []
+
+        for i in range(len(self._dataset.attributes[0])):
+            _attribute_range.append([])
+
+        for i in xrange(len(self._dataset.universe)):
+            for k in range(len(self._dataset.attributes[0])):
+                if self._dataset.universe[i][0][k] not in _attribute_range[k]:
+                    _attribute_range[k].append(self._dataset.universe[i][0][k])
+
+        for i in xrange(len(_attribute_range)):
+            attributes.update({self._dataset.attributes[0][i]:_attribute_range[i]})
+
+        self._dataset.attr_dict = attributes
     
     ###
     ### If a numeric attribute was read in from file, compute_numeric
