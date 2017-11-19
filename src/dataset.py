@@ -22,6 +22,7 @@ class Dataset(object):
         self._a_star = None
         self._consistent = True
         self._maxstar = None
+        self._attribute_dictionary = None
 
 
     @property
@@ -32,6 +33,14 @@ class Dataset(object):
     def name(self, value):
         self._name = value.split(".")[0]
         self._name = self._name.replace("/","-")
+
+    @property
+    def attr_dict(self):
+        return self._attribute_dictionary
+
+    @attr_dict.setter
+    def attr_dict(self, value):
+        self._attribute_dictionary = value
 
     @property
     def maxstar(self):

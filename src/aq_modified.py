@@ -5,6 +5,8 @@
 # @date: October 2017
 # @desc: Implements the AQ15 algorithm with modifications as specified in the EECS
 #         690 semester project requirements
+# Reference: Scientific Data Mining and Knowledge Discovery,
+#          Gaber, Mohamed Medhat (Ed.)
 
 
 from src.dataset import Dataset
@@ -76,7 +78,7 @@ class AQMod:
                 _seed_attribute = self._dataset.universe[seed][0][i]
 
                 if _universe_attribute != _seed_attribute:
-                    _selector = (str(self._dataset.attributes[0][i]),"NOT " + str(self._dataset.universe[case][0][i]))
+                    _selector = (str(self._dataset.attributes[0][i]),"not " + str(self._dataset.universe[case][0][i]))
                     _selectors.append(_selector)
 
             ##

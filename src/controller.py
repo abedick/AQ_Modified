@@ -20,32 +20,35 @@ class Controller(object):
         self._printer = Printer()
 
     def run(self):
-        # Grab a filename from the user
-        _file = False
+        # # Grab a filename from the user
+        # _file = False
 
-        while not _file:
-            _filename = raw_input("Please enter a filename of a LERS file format: ")
-            try:
-                _file_test = open(_filename, 'r')
-                _file = True
-            except IOError:
-                print "Invalid filename given."
-                _file = False
+        # while not _file:
+        #     _filename = raw_input("Please enter a filename of a LERS file format: ")
+        #     try:
+        #         _file_test = open(_filename, 'r')
+        #         _file = True
+        #     except IOError:
+        #         print "Invalid filename given."
+        #         _file = False
 
-        _ms = False
-        _ms_value = None
+        # _ms = False
+        # _ms_value = None
         
-        while not _ms:
-            _ms_value = raw_input("Please enter an integer value for MAXSTAR: ")
-            try:
-                _ms_value = int(_ms_value)
-                if _ms_value > 0:
-                    _ms_value = int(_ms_value)
-                    _ms = True
-                else:
-                    print "Invalid MAXSTAR value. Please enter an integer larger than 0."
-            except ValueError:
-                print "Invalid MAXSTAR value. Please enter an integer larger than 0."
+        # while not _ms:
+        #     _ms_value = raw_input("Please enter an integer value for MAXSTAR: ")
+        #     try:
+        #         _ms_value = int(_ms_value)
+        #         if _ms_value > 0:
+        #             _ms_value = int(_ms_value)
+        #             _ms = True
+        #         else:
+        #             print "Invalid MAXSTAR value. Please enter an integer larger than 0."
+        #     except ValueError:
+        #         print "Invalid MAXSTAR value. Please enter an integer larger than 0."
+
+        _filename = "datasets/test_data7.d"
+        _ms_value = 100
 
 
         # Start the reader and read in the file
@@ -138,7 +141,7 @@ class Controller(object):
             _attribute_sets[i] = list(set(_attribute_sets[i]))
 
         self._dataset.attribute_range = _attribute_sets
-    
+
     ###
     ### If a numeric attribute was read in from file, compute_numeric
     ### recalculates the attribute according to cutpoint method

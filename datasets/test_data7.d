@@ -1,6 +1,7 @@
 < >
 [ Temperature Headache Nausea Flue ]
-high        yes     no      yes
+! com
+high        yes     no      yes !com
 very_high   yes     yes     yes
 normal      no      no      no
 high        yes     yes     yes
